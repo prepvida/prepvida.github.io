@@ -1,318 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrepVida AI - Universal Evaluation Workspace</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 30px; margin: 0; }
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 950px; margin: 30px auto; }
-        .panel-box { background: #1e293b; padding: 25px; border-radius: 12px; border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
-        .hr-photo { width: 100%; max-width: 240px; height: 240px; border-radius: 50%; object-fit: cover; border: 4px solid #38bdf8; box-shadow: 0 0 20px rgba(56,189,248,0.2); }
-        video { width: 100%; border-radius: 8px; background: #000; max-height: 240px; transform: scaleX(-1); }
-        .alert-status { background: #334155; color: #38bdf8; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 15px; font-size: 0.9rem; border: 1px solid #475569; }
-        .counter-badge { display: inline-block; background: #10b981; color: #fff; padding: 8px 20px; border-radius: 20px; font-weight: bold; margin-bottom: 25px; }
-        .btn { background: #38bdf8; color: #0f172a; padding: 12px 35px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 20px; font-size: 1rem; }
-        input, select { padding: 12px; width: 85%; max-width: 320px; margin: 10px 0; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: #fff; font-size: 1rem; text-align: center; }
-        
-        /* LAPTOP SCREEN OVERLAY WARNING LAYOUT */
-        #mobileBlocker { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #090d16; color: #fff; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .warning-card { max-width: 500px; background: #1e293b; padding: 40px; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-    </style>
-    <!-- CORE SYSTEM PLUGINS -->
-    <script src="https://unpkg.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrepVida AI - Universal Evaluation Workspace</title>
+  <!-- Frameworks & Drivers -->
+  <script src="https://tailwindcss.com"></script>
+  <script src="https://jsdelivr.net"></script>
+  <script src="https://jsdelivr.net"></script>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- REJECTION COMPONENT FOR MOBILE PHONES & TABLETS -->
-    <div id="mobileBlocker">
-        <div class="warning-card">
-            <h1 style="color: #ef4444; font-size: 3rem; margin-top:0; margin-bottom:10px;">🛑</h1>
-            <h2 style="color: #ef4444; margin-top: 0; font-size: 1.5rem; letter-spacing: 0.05em;">SECURE LAPTOP WORKSPACE REQUIRED</h2>
-            <p style="color: #94a3b8; line-height: 1.6; font-size: 1.05rem;">This premium evaluation platform runs advanced background proctoring, webcam facial calibration, and real-time audio analysis modules.</p>
-            <p style="color: #f8fafc; font-weight: bold; background: #334155; padding: 12px; border-radius: 6px; margin-top: 20px; font-size:0.95rem;">Please re-open this link on a laptop or desktop computer using a Google Chrome browser to start your test.</p>
+  <!-- ================= AUTH SCREEN ================= -->
+  <div id="auth-screen" class="flex flex-col items-center justify-center min-h-screen px-4">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl backdrop-blur-sm">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          PrepVida AI
+        </h1>
+        <p class="text-slate-400 mt-2 text-sm">Universal Evaluation Workspace</p>
+      </div>
+
+      <form id="auth-form" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Student Email Address</label>
+          <input type="email" id="auth-email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="name@university.com">
         </div>
+        <button type="submit" id="auth-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl py-3 text-sm shadow-lg shadow-indigo-600/20 transition-all active:scale-[0.98]">
+          Send Secure Access Link
+        </button>
+      </form>
+      <div id="auth-message" class="mt-4 text-xs text-center hidden"></div>
     </div>
+  </div>
 
-    <!-- MAIN ENHANCED WORKSPACE CONTAINER -->
-    <div id="appWorkspace">
-        <!-- PASSWORDLESS DOORWAY -->
-        <div id="loginSection" class="panel-box" style="max-width: 420px; margin: 60px auto;">
-            <h2 style="color: #38bdf8; margin-top:0;">PrepVida Student Portal</h2>
-            <p style="color: #94a3b8; font-size: 0.95rem;">Enter your email to verify your subscription tokens and open your secure workspace sessions.</p>
-            <input type="email" id="loginEmail" placeholder="Enter Registration Email">
-            <button onclick="sendMagicLink()" class="btn" style="width:85%;">Send Secure Access Link</button>
+  <!-- ================= DASHBOARD SCREEN ================= -->
+  <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="border-b border-slate-900 bg-slate-900/50 backdrop-blur-md sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <span class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">PrepVida.in</span>
+        <div class="flex items-center gap-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-full px-4 py-1.5 text-xs font-medium text-slate-300">
+            Interviews Left: <span id="token-counter" class="text-indigo-400 font-bold">3</span>/3
+          </div>
+          <button id="logout-btn" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">Sign Out</button>
         </div>
+      </div>
+    </header>
 
-        <!-- LOCKED MAIN INTERACTION GRID -->
-        <div id="mainDashboard" style="display: none;">
-            <h1 style="color: #f8fafc; margin-bottom: 5px;">PrepVida Universal AI Workspace</h1>
-            <div class="counter-badge" id="tokenDisplay">Interviews Left: --/3</div>
-            
-            <div class="grid-container">
-                <div class="panel-box">
-                    <h3>AI Recruiter Panel</h3>
-                    <img class="hr-photo" src="https://unsplash.com" alt="AI Recruiter">
-                    <div style="margin-top: 15px; color: #94a3b8; font-weight: 500;">Listening and analyzing core technical rounds...</div>
-                </div>
-                <div class="panel-box">
-                    <h3>Candidate Webcam (Proctored)</h3>
-                    <video id="studentWebcam" autoplay muted></video>
-                    <div id="fraudAlert" class="alert-status">🔒 PROCTORING ACTIVE: SENSING BEHAVIOR</div>
-                </div>
-            </div>
-
-            <div id="controlPanel">
-                <!-- UNIVERSAL TARGET INPUT ENGINE FIELDS -->
-                <input type="text" id="targetCompany" placeholder="Enter Target Company (e.g., TCS, Google, Zoho)">
-                <br>
-                <input type="text" id="targetRole" placeholder="Enter Target Role (e.g., Software Engineer, Product Manager)">
-                <br>
-                <select id="currentRound">
-                    <option value="1">Round 1: Online Aptitude & Logic Screen</option>
-                    <option value="2">Round 2: Deep Technical Architect Loop</option>
-                    <option value="3">Round 3: Managerial & System Integration</option>
-                    <option value="4">Round 4: Behavioral & HR Leadership Fit</option>
-                </select>
-                <br>
-                <p style="color: #94a3b8; font-size:0.9rem; margin-top:15px;">Set your target configuration above, your webcam tracking is live, then tap the mic widget to face the panel.</p>
-                <div id="vapiWidgetPlaceholder"></div>
-            </div>
+    <!-- Main Dynamic Content Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- STEP 1: TARGET CONFIGURATION SELECTION -->
+      <div id="setup-panel" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl">
+        <h2 class="text-lg font-bold text-slate-200 mb-4">Set Your Target Configuration</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Dream Company</label>
+            <input type="text" id="target-company" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g., Google, Microsoft, TCS">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Target Role</label>
+            <input type="text" id="target-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors" placeholder="e.g., Software Engineer, Data Analyst">
+          </div>
         </div>
-    </div>
+        <div class="mt-4 flex justify-end">
+          <button id="lock-config-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-6 py-3 rounded-xl transition-all shadow-md active:scale-[0.98]">
+            Lock Configuration & Initialize Panel
+          </button>
+        </div>
+      </div>
 
-    <script type="module">
-    // 1. IMPORT AND INITIALIZE SUPABASE DIRECTLY INSIDE THE MODULE
-        import { createClient } from 'htpps://esm.sh';
-    const SUPABASE_URL = "https://supabase.co"; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTk3OTQsImV4cCI6MjEwMDg5NTc5NH0.G0GjztI-kuA27aYpcvFIG2WX7VJ0Y5TAasGRewEgXuU"//
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // 2. DEVICE CHECK CODE
-    function verifyDeviceIsLaptop() {
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isMobile = /mobile|android|iphone|ipad|tablet/i.test(userAgent);
-        if (isMobile || window.innerWidth < 768) {
-            document.getElementById('mobileBlocker').style.display = 'block';
-            document.getElementById('appWorkspace').style.display = 'none';
-        }
-    }
-    window.verifyDeviceIsLaptop = verifyDeviceIsLaptop;
-
-    // 3. MAGIC LINK FUNCTION
-    async function sendMagicLink() {
-        const email = document.getElementById('loginEmail').value;
-        if (!email) return alert("Please type your email address first!");
+      <!-- STEP 2: ACTIVE LIVE EVALUATION INTERFACE -->
+      <div id="interview-panel" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        const { error } = await supabaseClient.auth.signInWithOtp({
-            email: email,
-            options: { emailRedirectTo: window.location.origin }
-        });
-
-        if (error) alert("Error routing link: " + error.message);
-        else alert("Success! Secure access verification link sent to your inbox.");
-    }
-    // Bind to window so your HTML button on line 44 can trigger it!
-    window.sendMagicLink = sendMagicLink;
-        const video = document.getElementById('studentWebcam');
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(stream => { video.srcObject = stream; })
-            .catch(err => { document.getElementById('fraudAlert').innerText = "⚠️ Camera access required to prevent cheating flags."; });
+        <!-- Left 2 Columns: Interview Panel Feed Simulators -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Recruiter Stream Container -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[280px]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse"></span>
+                <h3 class="text-sm font-semibold tracking-wide text-slate-300">AI Recruiter Panel Feed</h3>
+              </div>
+              <span id="interview-timer" class="text-xs font-mono bg-slate-950 px-2.5 py-1 rounded border border-slate-800 text-slate-400">00:00 / 20:00</span>
+            </div>
             
-        supabaseClient.auth.onAuthStateChange(async (event, session) => {
-            if (session) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('mainDashboard').style.display = 'block';
-                fetchUserTokens(session.user.email);
-            }
-        });
-
-        async function fetchUserTokens(email) {
-            let { data, error } = await supabase.from('user_profiles').select('interviews_left').eq('email', email).single();
-            if (data) {
-                document.getElementById('tokenDisplay').innerText = `Interviews Left: ${data.interviews_left}/3`;
-                if(data.interviews_left <= 0) {
-                    document.getElementById('tokenDisplay').style.background = '#ef4444';
-                    document.getElementById('controlPanel').innerHTML = `<h3 style="color:#ef4444; margin-top:20px;">Your subscription tokens have expired.</h3><a href="YOUR_RAZORPAY_PAYMENT_LINK" class="btn">Refill 3 Tokens Now</a>`;
-                }
-            }
-        }
-
-        function getVapiCustomSessionVariables() {
-            return {
-                company: document.getElementById('targetCompany').value || "Standard Corporate",
-                role: document.getElementById('targetRole').value || "General Professional",
-                current_round: document.getElementById('currentRound').value || "1"
-            };
-        }
-    </script>
-
-<!-- OFFICIAL VAPI CONVERSATIONAL VOICE WIDGET -->
-<script src="https://unpkg.com" defer></script>
-<script>
-  var vapiInstance = null;
-  
-  window.addEventListener('load', function () {
-    if (window.vapiSDK) {
-      vapiInstance = window.vapiSDK.run({
-        apiKey: "f669166b-f926-4d68-90a3-0ed7461ecaef",
-        assistant: "a31e5c43-af58-4cf2-8d01-eeae23877f5c",
-        config: {
-          position: "bottom-right",
-          theme: { baseColor: "#38bdf8" }
-        }
-      });
-    } else {
-      console.error("Vapi SDK failed to load.");
-    }
-  });
-</script>
-
-      // AUTOMATICALLY SEND THE SEARCH FIELDS TO THE AI ON CALL START
-      vapiInstance.on('call-start', () => {
-         const variables = getVapiCustomSessionVariables();
-         vapiInstance.setSessionVariables(variables);
-      });
-    };
-  })(document, "script");
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrepVida AI - Universal Evaluation Workspace</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 30px; margin: 0; }
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 950px; margin: 30px auto; }
-        .panel-box { background: #1e293b; padding: 25px; border-radius: 12px; border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
-        .hr-photo { width: 100%; max-width: 240px; height: 240px; border-radius: 50%; object-fit: cover; border: 4px solid #38bdf8; box-shadow: 0 0 20px rgba(56,189,248,0.2); }
-        video { width: 100%; border-radius: 8px; background: #000; max-height: 240px; transform: scaleX(-1); }
-        .alert-status { background: #334155; color: #38bdf8; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 15px; font-size: 0.9rem; border: 1px solid #475569; }
-        .counter-badge { display: inline-block; background: #10b981; color: #fff; padding: 8px 20px; border-radius: 20px; font-weight: bold; margin-bottom: 25px; }
-        .btn { background: #38bdf8; color: #0f172a; padding: 12px 35px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 20px; font-size: 1rem; }
-        input, select { padding: 12px; width: 85%; max-width: 320px; margin: 10px 0; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: #fff; font-size: 1rem; text-align: center; }
-        
-        #mobileBlocker { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #090d16; color: #fff; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .warning-card { max-width: 500px; background: #1e293b; padding: 40px; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-    </style>
-    <script src="https://unpkg.com"></script>
-</head>
-<body>
-
-    <div id="mobileBlocker">
-        <div class="warning-card">
-            <h1 style="color: #ef4444; font-size: 3rem; margin-top:0; margin-bottom:10px;">🛑</h1>
-            <h2 style="color: #ef4444; margin-top: 0; font-size: 1.5rem; letter-spacing: 0.05em;">SECURE LAPTOP WORKSPACE REQUIRED</h2>
-            <p style="color: #94a3b8; line-height: 1.6; font-size: 1.05rem;">This premium evaluation platform runs advanced background proctoring, webcam facial calibration, and real-time audio analysis modules.</p>
-            <p style="color: #f8fafc; font-weight: bold; background: #334155; padding: 12px; border-radius: 6px; margin-top: 20px; font-size:0.95rem;">Please re-open this link on a laptop or desktop computer using a Google Chrome browser to start your test.</p>
-        </div>
-    </div>
-
-    <div id="appWorkspace">
-        <div id="loginSection" class="panel-box" style="max-width: 420px; margin: 60px auto;">
-            <h2 style="color: #38bdf8; margin-top:0;">PrepVida Student Portal</h2>
-            <p style="color: #94a3b8; font-size: 0.95rem;">Enter your email to verify your subscription tokens and open your secure workspace sessions.</p>
-            <input type="email" id="loginEmail" placeholder="Enter Registration Email">
-            <button onclick="sendMagicLink()" class="btn" style="width:85%;">Send Secure Access Link</button>
-        </div>
-
-        <div id="mainDashboard" style="display: none;">
-            <h1 style="color: #f8fafc; margin-bottom: 5px;">PrepVida Universal AI Workspace</h1>
-            <div class="counter-badge" id="tokenDisplay">Interviews Left: --/3</div>
-            
-            <div class="grid-container">
-                <div class="panel-box">
-                    <h3>AI Recruiter Panel</h3>
-                    <img class="hr-photo" src="https://unsplash.com" alt="AI Recruiter">
-                    <div style="margin-top: 15px; color: #94a3b8; font-weight: 500;">Listening and analyzing core technical rounds...</div>
-                </div>
-                <div class="panel-box">
-                    <h3>Candidate Webcam (Proctored)</h3>
-                    <video id="studentWebcam" autoplay muted></video>
-                    <div id="fraudAlert" class="alert-status">🔒 PROCTORING ACTIVE: SENSING BEHAVIOR</div>
-                </div>
+            <div class="my-6 text-center">
+              <p id="recruiter-status" class="text-slate-400 text-sm italic">Configure your parameters above to alert the recruiter...</p>
             </div>
 
-            <div id="controlPanel">
-                <input type="text" id="targetCompany" placeholder="Enter Target Company (e.g., TCS, Google, Zoho)">
-                <br>
-                <input type="text" id="targetRole" placeholder="Enter Target Role (e.g., Software Engineer, Product Manager)">
-                <br>
-                <select id="currentRound">
-                    <option value="1">Round 1: Online Aptitude & Logic Screen</option>
-                    <option value="2">Round 2: Deep Technical Architect Loop</option>
-                    <option value="3">Round 3: Managerial & System Integration</option>
-                    <option value="4">Round 4: Behavioral & HR Leadership Fit</option>
-                </select>
-                <br>
-                <p style="color: #94a3b8; font-size:0.9rem; margin-top:15px;">Set your target configuration above, your webcam tracking is live, then tap the mic widget to face the panel.</p>
-                <div id="vapiWidgetPlaceholder"></div>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+              <span class="text-xs text-slate-500">Rounds: Aptitude ➔ Technical ➔ Managerial ➔ Behavioral</span>
+              <button id="vapi-trigger-btn" disabled class="w-full sm:w-auto bg-slate-800 text-slate-500 text-sm font-semibold px-8 py-3.5 rounded-xl cursor-not-allowed transition-all flex items-center justify-center gap-2">
+                <span>Start 20-Min Live Evaluation</span>
+              </button>
             </div>
+          </div>
+
+          <!-- Evaluation Syllabus Breakdown Matrix -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-4">
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1">Round 1</div>
+              <div class="text-sm font-semibold text-slate-200">Aptitude & Logic Screen</div>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-4">
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1">Round 2</div>
+              <div class="text-sm font-semibold text-slate-200">Deep Technical Architect Loop</div>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-4">
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1">Round 3</div>
+              <div class="text-sm font-semibold text-slate-200">Managerial & Systems Integration</div>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800/60 rounded-xl p-4">
+              <div class="text-xs font-bold text-slate-400 uppercase mb-1">Round 4</div>
+              <div class="text-sm font-semibold text-slate-200">Behavioral & HR Leadership Fit</div>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <script>
-        function verifyDeviceIsLaptop() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isMobile = /mobile|android|iphone|ipad|tablet|iemobile|wpdesktop/i.test(userAgent);
-            if (isMobile || window.innerWidth < 768) {
-                document.getElementById('mobileBlocker').style.display = 'flex';
-                document.getElementById('appWorkspace').style.display = 'none';
-            }
-        }
-        verifyDeviceIsLaptop();
-
-        const SUPABASE_URL = "https://supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjIyMjIwMTAsImV4cCI6MjAzNzc5ODAxMH0.84C8i5Z_3_yN_b3_tV2D_P3_tZ2D_P3_tZ2D_P3_tV2D_P";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function sendMagicLink() {
-            const email = document.getElementById('loginEmail').value;
-            if(!email) return alert("Please type your email address first!");
-            const { error } = await supabase.auth.signInWithOtp({ 
-                email: email,
-                options: { redirectTo: window.location.origin }
-            });
-            if (error) alert("Error routing link: " + error.message);
-            else alert("Success! Secure access verification link sent to your inbox.");
-        }
-
-        const video = document.getElementById('studentWebcam');
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(stream => { video.srcObject = stream; })
-            .catch(err => { document.getElementById('fraudAlert').innerText = "⚠️ Camera access required to prevent cheating flags."; });
+        <!-- Right 1 Column: Proctoring & Candidate Environment Feed -->
+        <div class="space-y-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col items-center">
+            <div class="w-full flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+              <h3 class="text-sm font-semibold text-slate-300">Candidate Webcam (Proctored)</h3>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">Live Sync</span>
+            </div>
             
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            if (session) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('mainDashboard').style.display = 'block';
-                fetchUserTokens(session.user.email);
-            }
-        });
+            <!-- Mirror Video/Audio Active Monitoring Frame UI Placeholder -->
+            <div class="w-full aspect-video bg-slate-950 rounded-xl border border-slate-800 flex flex-col items-center justify-center p-4 relative overflow-hidden group">
+              <div id="video-placeholder-icon" class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-600 mb-2 group-hover:scale-110 transition-transform">
+                🎥
+              </div>
+              <video id="candidate-video" autoplay muted playsinline class="absolute inset-0 w-full h-full object-cover hidden"></video>
+              <p id="video-status-text" class="text-xs text-slate-500 text-center z-10">Webcam stream inactive. Grant access on call initiation.</p>
+            </div>
 
-        async function fetchUserTokens(email) {
-            let { data, error } = await supabase.from('user_profiles').select('interviews_left').eq('email', email).single();
-            if (data) {
-                document.getElementById('tokenDisplay').innerText = `Interviews Left: ${data.interviews_left}/3`;
-                
-                if(data.interviews_left <= 0) {
-                    document.getElementById('tokenDisplay').style.background = '#ef4444';
-                    
-                    const myUpiID = "ttharun34709@okaxis"; 
-                    const myName = "PrepVida AI";
-                    const upiAmount = "499";
-                    const note = `PrepVida Tokens For ${email}`;
-                    
-                    const upiDeepLinkUrl = `upi://pay?pa=${encodeURIComponent(myUpiID)}&pn=${encodeURIComponent(myName)}&am=${upiAmount}&tn=${encodeURIComponent(note)}&cu=INR`;
-                    
-                    document.getElementById('controlPanel').innerHTML = `
-                        <h3 style="color:#ef4444; margin-top:20px; margin-bottom:5px;">Your active subscription tokens have expired.</h3>
-                        <p style="color:#94a3b8; font-size:0.95rem; margin-bottom:15px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.5;">
-                            To add 3 fresh interview sessions to your portal account, transfer exactly <strong>₹${upiAmount}</strong> via your personal UPI app.<br>
-                            Once completed, send a snapshot of your receipt to <strong>hello@prepvida.in</strong> to credit your access tokens instantly.
-                        </p>
-                        <a href="${upiDeepLinkUrl}" class="btn" style="background:#10b981; color:#fff;">Pay ₹${upiAmount} Directly via UPI</a>
-                        <br><br>
+            <div class="w-full mt-4 bg-slate-950/80 border border-slate-850 rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">Facial Calibration Modules</span>
+                <span class="text-emerald-400 font-medium">Active</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">Background Audio Analysis</span>
+                <span class="text-emerald-400 font-medium">Sensing</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400">System Tab Tracker</span>
+                <span class="text-indigo-400 font-medium">Locked</span>
+              </div>
+            </div>
+          </div>
