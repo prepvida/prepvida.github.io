@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PrepVida AI - Universal Evaluation Workspace</title>
   
-  <!-- Core Drivers and SDK Libraries -->
+  <!-- Fixed Stable Core SDK Drivers -->
   <script src="https://jsdelivr.net"></script>
-  <script src="https://jsdelivr.net"></script>
+  <script src="https://cdn.jsdelivr.net/gh/balacodeio/Vapi-Web-UMD@latest/dist/latest/vapi-web-bundle.min.js"></script>
 
-  <!-- Complete Premium Stylesheet Built-In Directly -->
+  <!-- Premium Built-In Layout Design (No External CSS to break!) -->
   <style>
     :root {
       --bg-color: #020617;
@@ -42,7 +42,7 @@
       display: none !important;
     }
 
-    /* Auth Screen layout design definitions */
+    /* Auth Card Grid Styles */
     .auth-container {
       display: flex;
       align-items: center;
@@ -125,7 +125,7 @@
     .btn:active { transform: scale(0.98); }
     .btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
-    /* Dashboard Header layout elements */
+    /* Dashboard Header Styles */
     header {
       background: #0f172a;
       border-bottom: 1px solid var(--border-color);
@@ -213,6 +213,7 @@
 
     .btn-inline { width: auto; padding: 12px 24px; }
 
+    /* Workspace Architecture layouts */
     .workspace-layout {
       display: grid;
       grid-template-columns: 1fr;
@@ -312,7 +313,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 166px;
       position: relative;
       overflow: hidden;
     }
@@ -347,6 +348,7 @@
     .metric-val-active { color: var(--success); font-weight: 500; }
     .metric-val-locked { color: var(--primary); font-weight: 500; }
 
+    /* Modal Framework Structures */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -413,6 +415,3 @@
       border-radius: 9999px;
       letter-spacing: 0.05em;
     }
-
-    .tier-title { font-size: 0.875rem; font-weight: 700; color: var(--text-main); }
-    .price-amt { font-size: 1.75rem; font-weight: 800; margin: 8px 0; }
