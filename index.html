@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PrepVida AI - Universal Evaluation Workspace</title>
   
-  <!-- Core Drivers Only -->
+  <!-- Core Drivers and SDK Libraries -->
   <script src="https://jsdelivr.net"></script>
   <script src="https://jsdelivr.net"></script>
 
-  <!-- Built-in Premium Style Sheet (No External CSS CDN to Break!) -->
+  <!-- Complete Premium Stylesheet Built-In Directly -->
   <style>
     :root {
       --bg-color: #020617;
@@ -42,7 +42,7 @@
       display: none !important;
     }
 
-    /* Auth Screen styling */
+    /* Auth Screen layout design definitions */
     .auth-container {
       display: flex;
       align-items: center;
@@ -125,11 +125,10 @@
     .btn:active { transform: scale(0.98); }
     .btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
-    /* Dashboard Grid layout styles */
+    /* Dashboard Header layout elements */
     header {
-      background: #0f172a80;
-      border-b: 1px solid var(--border-color);
-      backdrop-filter: blur(12px);
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-color);
       position: sticky;
       top: 0;
       z-index: 40;
@@ -214,7 +213,6 @@
 
     .btn-inline { width: auto; padding: 12px 24px; }
 
-    /* Main Workspace panels styling */
     .workspace-layout {
       display: grid;
       grid-template-columns: 1fr;
@@ -302,7 +300,6 @@
     .round-num { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;}
     .round-title { font-size: 0.875rem; font-weight: 600; }
 
-    /* Camera Proctor Frame */
     .proctor-card { display: flex; flex-direction: column; align-items: center; }
     
     .video-frame {
@@ -350,7 +347,6 @@
     .metric-val-active { color: var(--success); font-weight: 500; }
     .metric-val-locked { color: var(--primary); font-weight: 500; }
 
-    /* Modal Overlay styling definitions */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -417,3 +413,6 @@
       border-radius: 9999px;
       letter-spacing: 0.05em;
     }
+
+    .tier-title { font-size: 0.875rem; font-weight: 700; color: var(--text-main); }
+    .price-amt { font-size: 1.75rem; font-weight: 800; margin: 8px 0; }
