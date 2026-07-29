@@ -101,7 +101,7 @@ const SUPABASE_URL = "https://supabase.co";
         async function sendMagicLink() {
             const email = document.getElementById('loginEmail').value;
             if(!email) return alert("Please type your email address first!");
-            const { error } = await supabaseclient.auth.signInWithOtp({ 
+            const { error } = await supabaseClient.auth.signInWithOtp({ 
                 email: email,
                 options: { emailredirectTo: window.location.origin }
             });
