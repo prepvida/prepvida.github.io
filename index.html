@@ -92,8 +92,8 @@
                 document.getElementById('appWorkspace').style.display = 'none';
             }
         }
-        verifyDeviceIsLaptop();
-
+        window.verifyDeviceIsLaptop = verifyDeviceIsLaptop;
+verifyDeviceIsLaptop();
         // INPUT INDIVIDUAL KEY MAP STRINGS FROM SUPABASE HERE
 const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTk3OTQsImV4cCI6MjEwMDg5NTc5NH0.G0GjztI-kuA27aYpcvFIG2WX7VJ0Y5TAasGRewEgXuU";
@@ -144,14 +144,12 @@ const SUPABASE_URL = "https://supabase.co";
     </script>
 
 <!-- OFFICIAL VAPI CONVERSATIONAL VOICE WIDGET -->
+<script src="https://jsdelivr.net" defer></script>
 <script>
   var vapiInstance = null;
-  (function (d, t) {
-    var g = d.createElement(t), s = d.getElementsByTagName(t);
-    g.src = "https://jsdelivr.net";
-    g.defer = true; g.async = true;
-    s.parentNode.insertBefore(g, s);
-    g.onload = function () {
+  
+  window.addEventListener('load', function () {
+    if (window.vapiSDK) {
       vapiInstance = window.vapiSDK.run({
         apiKey: "f669166b-f926-4d68-90a3-0ed7461ecaef",
         assistant: "a31e5c43-af58-4cf2-8d01-eeae23877f5c",
@@ -160,6 +158,11 @@ const SUPABASE_URL = "https://supabase.co";
           theme: { baseColor: "#38bdf8" }
         }
       });
+    } else {
+      console.error("Vapi SDK failed to load.");
+    }
+  });
+</script>
 
       // AUTOMATICALLY SEND THE SEARCH FIELDS TO THE AI ON CALL START
       vapiInstance.on('call-start', () => {
