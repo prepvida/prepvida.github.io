@@ -82,39 +82,43 @@
     </div>
 
     <script> type="module">
-        // LAPTOP GATING CONTROLLER CODE
-        function verifyDeviceIsLaptop() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isMobile = /mobile|android|iphone|ipad|tablet|iemobile|wpdesktop/i.test(userAgent);
-            
-            if (isMobile || window.innerWidth < 768) {
-                document.getElementById('mobileBlocker').style.display = 'flex';
-                document.getElementById('appWorkspace').style.display = 'none';
-            }
-        }
-        window.verifyDeviceIsLaptop = verifyDeviceIsLaptop;
-        // INPUT INDIVIDUAL KEY MAP STRINGS FROM SUPABASE HERE
-const SUPABASE_URL = "https://supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTk3OTQsImV4cCI6MjEwMDg5NTc5NH0.G0GjztI-kuA27aYpcvFIG2WX7VJ0Y5TAasGRewEgXuU";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 1. ALWAYS INITIALIZE YOUR PLUGINS AT THE VERY TOP
+    const SUPABASE_URL = "https://supabase.co"; 
+    const SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTk3OTQsImV4cCI6MjEwMDg5NTc5NH0.G0GjztI-kuA27aYpcvFIG2WX7VJ0Y5TAasGRewEgXuU
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        async function sendMagicLink() {
-            const email = document.getElementById('loginEmail').value;
-            if(!email) return alert("Please type your email address first!");
-            const { error } = await supabaseClient.auth.signInWithOtp({ 
-                email: email,
-                options: { emailredirectTo: window.location.origin }
-            });
-            if (error) alert("Error routing link: " + error.message);
-            else alert("Success! Secure access verification link sent to your inbox.");
+    // 2. DEVICE CHECK CODE
+    function verifyDeviceIsLaptop() {
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isMobile = /mobile|android|iphone|ipad|tablet/i.test(userAgent);
+        if (isMobile || window.innerWidth < 768) {
+            document.getElementById('mobileBlocker').style.display = 'block';
+            document.getElementById('appWorkspace').style.display = 'none';
         }
+    }
+    window.verifyDeviceIsLaptop = verifyDeviceIsLaptop;
 
+    // 3. MAGIC LINK FUNCTION
+    async function sendMagicLink() {
+        const email = document.getElementById('loginEmail').value;
+        if (!email) return alert("Please type your email address first!");
+        
+        const { error } = await supabaseClient.auth.signInWithOtp({
+            email: email,
+            options: { emailRedirectTo: window.location.origin }
+        });
+
+        if (error) alert("Error routing link: " + error.message);
+        else alert("Success! Secure access verification link sent to your inbox.");
+    }
+    // Bind to window so your HTML button on line 44 can trigger it!
+    window.sendMagicLink = sendMagicLink;
         const video = document.getElementById('studentWebcam');
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(stream => { video.srcObject = stream; })
             .catch(err => { document.getElementById('fraudAlert').innerText = "⚠️ Camera access required to prevent cheating flags."; });
             
-        supabase.auth.onAuthStateChange(async (event, session) => {
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (session) {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('mainDashboard').style.display = 'block';
