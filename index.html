@@ -172,3 +172,142 @@
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVida AI - Universal Evaluation Workspace</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; text-align: center; padding: 30px; margin: 0; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 950px; margin: 30px auto; }
+        .panel-box { background: #1e293b; padding: 25px; border-radius: 12px; border: 2px solid #334155; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        .hr-photo { width: 100%; max-width: 240px; height: 240px; border-radius: 50%; object-fit: cover; border: 4px solid #38bdf8; box-shadow: 0 0 20px rgba(56,189,248,0.2); }
+        video { width: 100%; border-radius: 8px; background: #000; max-height: 240px; transform: scaleX(-1); }
+        .alert-status { background: #334155; color: #38bdf8; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 15px; font-size: 0.9rem; border: 1px solid #475569; }
+        .counter-badge { display: inline-block; background: #10b981; color: #fff; padding: 8px 20px; border-radius: 20px; font-weight: bold; margin-bottom: 25px; }
+        .btn { background: #38bdf8; color: #0f172a; padding: 12px 35px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 20px; font-size: 1rem; }
+        input, select { padding: 12px; width: 85%; max-width: 320px; margin: 10px 0; border-radius: 6px; border: 1px solid #475569; background: #1e293b; color: #fff; font-size: 1rem; text-align: center; }
+        
+        #mobileBlocker { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #090d16; color: #fff; z-index: 99999; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .warning-card { max-width: 500px; background: #1e293b; padding: 40px; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    </style>
+    <script src="https://jsdelivr.net"></script>
+    <script defer src="https://jsdelivr.net"></script>
+</head>
+<body>
+
+    <div id="mobileBlocker">
+        <div class="warning-card">
+            <h1 style="color: #ef4444; font-size: 3rem; margin-top:0; margin-bottom:10px;">🛑</h1>
+            <h2 style="color: #ef4444; margin-top: 0; font-size: 1.5rem; letter-spacing: 0.05em;">SECURE LAPTOP WORKSPACE REQUIRED</h2>
+            <p style="color: #94a3b8; line-height: 1.6; font-size: 1.05rem;">This premium evaluation platform runs advanced background proctoring, webcam facial calibration, and real-time audio analysis modules.</p>
+            <p style="color: #f8fafc; font-weight: bold; background: #334155; padding: 12px; border-radius: 6px; margin-top: 20px; font-size:0.95rem;">Please re-open this link on a laptop or desktop computer using a Google Chrome browser to start your test.</p>
+        </div>
+    </div>
+
+    <div id="appWorkspace">
+        <div id="loginSection" class="panel-box" style="max-width: 420px; margin: 60px auto;">
+            <h2 style="color: #38bdf8; margin-top:0;">PrepVida Student Portal</h2>
+            <p style="color: #94a3b8; font-size: 0.95rem;">Enter your email to verify your subscription tokens and open your secure workspace sessions.</p>
+            <input type="email" id="loginEmail" placeholder="Enter Registration Email">
+            <button onclick="sendMagicLink()" class="btn" style="width:85%;">Send Secure Access Link</button>
+        </div>
+
+        <div id="mainDashboard" style="display: none;">
+            <h1 style="color: #f8fafc; margin-bottom: 5px;">PrepVida Universal AI Workspace</h1>
+            <div class="counter-badge" id="tokenDisplay">Interviews Left: --/3</div>
+            
+            <div class="grid-container">
+                <div class="panel-box">
+                    <h3>AI Recruiter Panel</h3>
+                    <img class="hr-photo" src="https://unsplash.com" alt="AI Recruiter">
+                    <div style="margin-top: 15px; color: #94a3b8; font-weight: 500;">Listening and analyzing core technical rounds...</div>
+                </div>
+                <div class="panel-box">
+                    <h3>Candidate Webcam (Proctored)</h3>
+                    <video id="studentWebcam" autoplay muted></video>
+                    <div id="fraudAlert" class="alert-status">🔒 PROCTORING ACTIVE: SENSING BEHAVIOR</div>
+                </div>
+            </div>
+
+            <div id="controlPanel">
+                <input type="text" id="targetCompany" placeholder="Enter Target Company (e.g., TCS, Google, Zoho)">
+                <br>
+                <input type="text" id="targetRole" placeholder="Enter Target Role (e.g., Software Engineer, Product Manager)">
+                <br>
+                <select id="currentRound">
+                    <option value="1">Round 1: Online Aptitude & Logic Screen</option>
+                    <option value="2">Round 2: Deep Technical Architect Loop</option>
+                    <option value="3">Round 3: Managerial & System Integration</option>
+                    <option value="4">Round 4: Behavioral & HR Leadership Fit</option>
+                </select>
+                <br>
+                <p style="color: #94a3b8; font-size:0.9rem; margin-top:15px;">Set your target configuration above, your webcam tracking is live, then tap the mic widget to face the panel.</p>
+                <div id="vapiWidgetPlaceholder"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function verifyDeviceIsLaptop() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /mobile|android|iphone|ipad|tablet|iemobile|wpdesktop/i.test(userAgent);
+            if (isMobile || window.innerWidth < 768) {
+                document.getElementById('mobileBlocker').style.display = 'flex';
+                document.getElementById('appWorkspace').style.display = 'none';
+            }
+        }
+        verifyDeviceIsLaptop();
+
+        const SUPABASE_URL = "https://supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHRqeWdiZmp5Y3NyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjIyMjIwMTAsImV4cCI6MjAzNzc5ODAxMH0.84C8i5Z_3_yN_b3_tV2D_P3_tZ2D_P3_tZ2D_P3_tV2D_P";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function sendMagicLink() {
+            const email = document.getElementById('loginEmail').value;
+            if(!email) return alert("Please type your email address first!");
+            const { error } = await supabase.auth.signInWithOtp({ 
+                email: email,
+                options: { redirectTo: window.location.origin }
+            });
+            if (error) alert("Error routing link: " + error.message);
+            else alert("Success! Secure access verification link sent to your inbox.");
+        }
+
+        const video = document.getElementById('studentWebcam');
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => { document.getElementById('fraudAlert').innerText = "⚠️ Camera access required to prevent cheating flags."; });
+            
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainDashboard').style.display = 'block';
+                fetchUserTokens(session.user.email);
+            }
+        });
+
+        async function fetchUserTokens(email) {
+            let { data, error } = await supabase.from('user_profiles').select('interviews_left').eq('email', email).single();
+            if (data) {
+                document.getElementById('tokenDisplay').innerText = `Interviews Left: ${data.interviews_left}/3`;
+                
+                if(data.interviews_left <= 0) {
+                    document.getElementById('tokenDisplay').style.background = '#ef4444';
+                    
+                    const myUpiID = "ttharun34709@okaxis"; 
+                    const myName = "PrepVida AI";
+                    const upiAmount = "499";
+                    const note = `PrepVida Tokens For ${email}`;
+                    
+                    const upiDeepLinkUrl = `upi://pay?pa=${encodeURIComponent(myUpiID)}&pn=${encodeURIComponent(myName)}&am=${upiAmount}&tn=${encodeURIComponent(note)}&cu=INR`;
+                    
+                    document.getElementById('controlPanel').innerHTML = `
+                        <h3 style="color:#ef4444; margin-top:20px; margin-bottom:5px;">Your active subscription tokens have expired.</h3>
+                        <p style="color:#94a3b8; font-size:0.95rem; margin-bottom:15px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.5;">
+                            To add 3 fresh interview sessions to your portal account, transfer exactly <strong>₹${upiAmount}</strong> via your personal UPI app.<br>
+                            Once completed, send a snapshot of your receipt to <strong>hello@prepvida.in</strong> to credit your access tokens instantly.
+                        </p>
+                        <a href="${upiDeepLinkUrl}" class="btn" style="background:#10b981; color:#fff;">Pay ₹${upiAmount} Directly via UPI</a>
+                        <br><br>
