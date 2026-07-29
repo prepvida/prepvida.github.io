@@ -144,7 +144,31 @@
         }
     </script>
 
-    <!-- PASTE YOUR COPIED VAPI WIDGET CODE SNIPPET DIRECTLY RIGHT HERE -->
+<!-- OFFICIAL VAPI CONVERSATIONAL VOICE WIDGET -->
+<script>
+  var vapiInstance = null;
+  (function (d, t) {
+    var g = d.createElement(t), s = d.getElementsByTagName(t);
+    g.src = "https://jsdelivr.net";
+    g.defer = true; g.async = true;
+    s.parentNode.insertBefore(g, s);
+    g.onload = function () {
+      vapiInstance = window.vapiSDK.run({
+        apiKey: "f669166b-f926-4d68-90a3-0ed7461ecaef",
+        assistant: "a31e5c43-af58-4cf2-8d01-eeae23877f5c",
+        config: {
+          position: "bottom-right",
+          theme: { baseColor: "#38bdf8" }
+        }
+      });
 
+      // AUTOMATICALLY SEND THE SEARCH FIELDS TO THE AI ON CALL START
+      vapiInstance.on('call-start', () => {
+         const variables = getVapiCustomSessionVariables();
+         vapiInstance.setSessionVariables(variables);
+      });
+    };
+  })(document, "script");
+</script>
 </body>
 </html>
