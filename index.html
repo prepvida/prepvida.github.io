@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrepVida AI - Login Gateway</title>
-    <!-- REMOVED DEFER: Forces the browser to load connection tools first so the button never freezes -->
-    <script src="https://jsdelivr.net"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         .login-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
@@ -25,20 +23,34 @@
 </div>
 
 <script>
-    // Initialize connection channels right away
+    // FIX: Injection function that loads the Supabase engine with a dynamic timestamp to completely destroy stale browser caching profiles
+    (function() {
+        const scriptElement = document.createElement('script');
+        scriptElement.src = "https://jsdelivr.net" + Date.now();
+        scriptElement.async = false;
+        document.head.appendChild(scriptElement);
+    })();
+
     const DB_URL = "https://supabase.co";
     const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
-    
-    // Connect to Supabase instantly
-    const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+    let supabaseClient = null;
 
     async function processSecureLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         if (!email) { alert("Please input your registered email address."); return; }
 
+        // Secure client instantiation on click demand triggers
+        if (!supabaseClient && typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+        }
+
+        if (!supabaseClient) { 
+            alert("Local browser network is finalizing synchronization arrays. Please click 'Verify' once more right now to connect!"); 
+            return; 
+        }
+
         sessionStorage.setItem('student_email', email);
 
-        // Fetch user token rows data
         let { data: profile, error } = await supabaseClient
             .from('student_interviews')
             .select('credits_remaining, tier')
@@ -47,7 +59,6 @@
 
         if (error) { alert("Network validation error: " + error.message); return; }
 
-        // Automate registration profiles for new users seamlessly
         if (!profile) {
             const { data: newProfile, error: insertError } = await supabaseClient
                 .from('student_interviews')
