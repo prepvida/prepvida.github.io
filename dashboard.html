@@ -15,15 +15,14 @@
         .card-pro { border: 2px solid #0070f3; position: relative; box-shadow: 0 8px 20px rgba(0,71,243,0.05); }
         .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 2px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .btn-pay { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
-        
-        /* Compact Small Trial Row Elements */
         .trial-box { background: white; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 15px; }
-        .btn-small { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; white-space: nowrap; transition: background 0.2s; }
-        .btn-small:hover { background: #e2e8f0; }
-
+        .btn-small { background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; white-space: nowrap; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
         th { background: #f1f5f9; color: #475569; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 700px; max-height: 80vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
+        .transcript-text { background: #f8fafc; padding: 15px; border-radius: 6px; white-space: pre-line; max-height: 250px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -41,37 +40,37 @@
         </div>
     </div>
 
-    <!-- Core 3-Interview Premium Packs (The Large Cards) -->
+    <!-- Core Value Multi-Packs (3 Interviews) -->
     <h3 class="section-title">Step 2: Choose Your Interview Multi-Pack (3 Sessions Each)</h3>
     <div class="pricing-grid">
         <div class="card">
             <h3>Basic Pack</h3>
             <h2 style="font-size: 36px; margin: 15px 0;">₹499</h2>
-            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 AI Voice-only Interviews simulating screeners.</p>
+            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 AI Voice-only Interviews. (No recording playbacks)</p>
             <button class="btn-pay" onclick="openQrModal(499, 'Basic Tier Pack')">Buy 3 Pack</button>
         </div>
         <div class="card card-pro">
             <span class="badge">Most Popular</span>
             <h3>Pro Assessment</h3>
             <h2 style="font-size: 36px; margin: 15px 0; color: #0070f3;">₹799</h2>
-            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 AI Voice Interviews + Camera Streaming Feed + Static Avatar.</p>
+            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 AI Voice Interviews + Webcam Streaming + Recording playback.</p>
             <button class="btn-pay" onclick="openQrModal(799, 'Pro Tier Pack')">Buy 3 Pack</button>
         </div>
         <div class="card">
             <h3>Elite Executive</h3>
             <h2 style="font-size: 36px; margin: 15px 0;">₹999</h2>
-            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 Full Benefit Interviews + Eye Movement Proctoring + Audio Transcripts.</p>
+            <p style="color: #64748b; font-size: 13px; min-height: 40px;">3 Full Benefit Interviews + Eye Proctoring + Recording playback.</p>
             <button class="btn-pay" style="background: #0f172a;" onclick="openQrModal(999, 'Elite Tier Pack')">Buy 3 Pack</button>
         </div>
     </div>
 
-    <!-- Compact Small Layout for Single Trial Passes -->
+    <!-- Small Compact Single Trial Passes -->
     <h3 class="section-title">Need a Single Trial Run First?</h3>
     
     <div class="trial-box">
         <div>
             <strong style="font-size: 15px;">Single Basic Pass (1 Interview Session)</strong>
-            <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">Perfect to test voice prompts. No camera access included.</p>
+            <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">Try out voice prompts. (No recording playbacks)</p>
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <span style="font-size: 18px; font-weight: bold; color: #0f172a;">₹199</span>
@@ -82,7 +81,7 @@
     <div class="trial-box" style="border-color: #93c5fd; background: #f0fdf4;">
         <div>
             <strong style="font-size: 15px; color: #0369a1;">Single Elite Pass (1 Interview Session)</strong>
-            <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">Full benefit trial loop. Unlocks webcam access, eye tracking, and transcript log access.</p>
+            <p style="margin: 3px 0 0 0; font-size: 13px; color: #64748b;">Full benefit test run. Unlocks webcam access, eye tracking, and full recording playback.</p>
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <span style="font-size: 18px; font-weight: bold; color: #0369a1;">₹399</span>
@@ -90,7 +89,7 @@
         </div>
     </div>
 
-    <!-- Analytical Datatable -->
+    <!-- Session Log Presentation Grid -->
     <h3 class="section-title">Your Past Performance Logs</h3>
     <table>
         <thead>
@@ -98,7 +97,7 @@
                 <th>Date</th>
                 <th>Target Company</th>
                 <th>Score</th>
-                <th>Audio Recording</th>
+                <th>Audio Recording Feature</th>
                 <th>Full Analysis Report</th>
             </tr>
         </thead>
@@ -106,7 +105,7 @@
     </table>
 </div>
 
-<!-- Modal QR Code Blocks -->
+<!-- Modal Overlay QR Scanner Box Layout -->
 <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
         <h3 id="mdlQrTitle" style="margin-top:0;">Complete Payment</h3>
@@ -116,11 +115,25 @@
     </div>
 </div>
 
+<div class="modal" id="reportModal">
+    <div class="modal-content">
+        <div style="padding:20px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="mdlTitle">Interview Report</h3>
+            <button onclick="document.getElementById('reportModal').style.display='none'" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        <div style="padding:20px; overflow-y:auto;">
+            <div id="mdlScores" style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:20px;"></div>
+            <div class="transcript-text" id="mdlTranscript"></div>
+        </div>
+    </div>
+</div>
+
 <script>
     const DB_URL = "https://supabase.co";
     const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
     const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
     let currentHistoryData = [];
+    let activeUserTier = 'basic'; 
 
     window.addEventListener('load', () => {
         const email = sessionStorage.getItem('student_email');
@@ -132,25 +145,7 @@
     async function fetchDashboardRecords(email) {
         const { data: profile } = await supabaseClient.from('student_interviews').select('*').eq('email', email).maybeSingle();
         if (profile) {
+            activeUserTier = profile.tier ? profile.tier.toLowerCase() : 'basic';
             document.getElementById('lblCredits').innerText = profile.credits_remaining;
             if (profile.credits_remaining > 0) {
                 const alertBanner = document.createElement('div');
-                alertBanner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:12px; border-radius:8px; margin-bottom:25px; font-weight:bold; text-decoration:none;">Active balance detected! Click here to enter the Interview Room (Desktop/Laptop Only) →</a>`;
-                document.querySelector('.wrapper').prepend(alertBanner);
-            }
-        }
-
-        const { data: history } = await supabaseClient.from('interview_history').select('*').eq('student_email', email).order('created_at', { ascending: false });
-        currentHistoryData = history || [];
-        const tableBody = document.getElementById('historyTableBody');
-        tableBody.innerHTML = "";
-        
-        if (currentHistoryData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">No performance history logged yet.</td></tr>`;
-        } else {
-            currentHistoryData.forEach((row, index) => {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>${new Date(row.created_at).toLocaleDateString()}</td>
-                        <td><strong>${row.company_selected}</strong></td>
-                        <td><span style="background:#f0fdf4; color:#16a34a; padding:4px 8px; border-radius:4px; font-weight:bold;">${row.score_json?.overall_score || 0}/100</span></td>
