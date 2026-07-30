@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrepVida AI - Login Gateway</title>
-    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net" defer></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         .login-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
@@ -18,30 +18,63 @@
 
 <div class="login-card">
     <h1>PrepVida AI</h1>
-    <p style="color: #475569; margin: 0; font-size: 15px;">Enter your email to verify your active interview station tokens.</p>
+    <p style="color: #475569; margin: 0; font-size: 15px;">Enter your email to access your mock interview station panel.</p>
     <input type="email" id="loginEmail" placeholder="name@example.com" required>
     <button class="btn" onclick="processSecureLogin()">Verify Account Credentials</button>
 </div>
 
 <script>
-    const DB_URL = "https://supabase.co";
-    const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
-    const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+    let supabaseClient = null;
+
+    window.addEventListener('load', () => {
+        const DB_URL = "https://supabase.co";
+        const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+        }
+    });
 
     async function processSecureLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         if (!email) { alert("Please input your registered email address."); return; }
+        if (!supabaseClient) { alert("System stabilizing, please retry in 1 second."); return; }
 
         sessionStorage.setItem('student_email', email);
 
-        const { data: profile, error } = await supabaseClient
+        // 1. Fetch user data from database
+        let { data: profile, error } = await supabaseClient
             .from('student_interviews')
             .select('credits_remaining, tier')
             .eq('email', email)
             .maybeSingle();
 
-        if (error) { alert("Network validation bottleneck. Please try again."); return; }
+        if (error) { alert("Network validation error: " + error.message); return; }
 
+        // 2. LOOPHOLE FIXED: If student doesn't exist, automatically register them in the system!
+        if (!profile) {
+            console.log("New student detected. Automating account registration profile...");
+            
+            const { data: newProfile, error: insertError } = await supabaseClient
+                .from('student_interviews')
+                .insert([{ 
+                    email: email, 
+                    credits_remaining: 0, 
+                    tier: 'basic', 
+                    payment_status: 'pending' 
+                }])
+                .select()
+                .maybeSingle();
+
+            if (insertError) {
+                // If direct public inserts are blocked, route them straight to dashboard safely
+                console.warn("Public insert restricted, navigating to pricing hub.");
+                window.location.href = "dashboard.html";
+                return;
+            }
+            profile = newProfile;
+        }
+
+        // 3. Route student step-by-step based on real credit balances
         if (profile && profile.credits_remaining > 0) {
             sessionStorage.setItem('auth_token', 'passed_secure_gate');
             sessionStorage.setItem('active_tier', profile.tier);
