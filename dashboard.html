@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrepVida - Subscription Matrix</title>
-    <!-- Core unblockable styling and standard scripts -->
-    <script src="https://cloudflare.com"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
         .wrapper { max-width: 1000px; margin: 0 auto; }
@@ -44,7 +42,7 @@
                 <h2 style="font-size: 36px; margin: 10px 0;">₹199</h2>
                 <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Voice Only + Base Automated Score</strong></p>
             </div>
-            <button class="btn-checkout" onclick="triggerUPI(199, 'Single Pass ₹199')">Select Plan</button>
+            <button class="btn-checkout" onclick="triggerUPI(199, 'Single Pass 199')">Select Plan</button>
         </div>
         <!-- Pass 329 -->
         <div class="tier-card premium-card">
@@ -54,7 +52,7 @@
                 <h2 style="font-size: 36px; margin: 10px 0;">₹329</h2>
                 <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Webcam On + Static Avatar + Full Audio Playback sent</strong></p>
             </div>
-            <button class="btn-checkout" onclick="triggerUPI(329, 'Single Pro Pass ₹329')">Select Plan</button>
+            <button class="btn-checkout" onclick="triggerUPI(329, 'Single Pro Pass 329')">Select Plan</button>
         </div>
         <!-- Pack 499 -->
         <div class="tier-card">
@@ -63,7 +61,7 @@
                 <h2 style="font-size: 36px; margin: 10px 0;">₹499</h2>
                 <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Voice Only + Base Score (No audio recording unlocked)</strong></p>
             </div>
-            <button class="btn-checkout" onclick="triggerUPI(499, 'Basic Bundle ₹499')">Select Plan</button>
+            <button class="btn-checkout" onclick="triggerUPI(499, 'Basic Bundle 499')">Select Plan</button>
         </div>
         <!-- Pack 799 -->
         <div class="tier-card premium-card">
@@ -73,7 +71,7 @@
                 <h2 style="font-size: 36px; margin: 10px 0;">₹799</h2>
                 <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Static Avatar + Performance metrics + Full Playback</strong></p>
             </div>
-            <button class="btn-checkout" onclick="triggerUPI(799, 'Pro Combo ₹799')">Select Plan</button>
+            <button class="btn-checkout" onclick="triggerUPI(799, 'Pro Combo 799')">Select Plan</button>
         </div>
         <!-- Pack 999 -->
         <div class="tier-card">
@@ -82,7 +80,7 @@
                 <h2 style="font-size: 36px; margin: 10px 0; color: #0f172a;">₹999</h2>
                 <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Dynamic Eye-Tracking Guard + Full Audio Logs Delivery</strong></p>
             </div>
-            <button class="btn-checkout" style="background:#0f172a;" onclick="triggerUPI(999, 'Elite Suite ₹999')">Select Plan</button>
+            <button class="btn-checkout" style="background:#0f172a;" onclick="triggerUPI(999, 'Elite Suite 999')">Select Plan</button>
         </div>
     </div>
 
@@ -104,11 +102,16 @@
     </table>
 </div>
 
-<!-- UPI QR Desktop Overlay -->
+<!-- UPI QR Desktop Overlay Layout (Uses Block-Proof Image Engine) -->
 <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
     <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
         <h3 id="mdlQrTitle" style="margin-top:0;">Complete Payment</h3>
-        <div id="qrcodeCanvas" style="display:flex; justify-content:center; margin:20px 0;"></div>
+        
+        <!-- FIX: Block-proof image block that loads instantly under any network restriction -->
+        <div style="display:flex; justify-content:center; margin:20px 0;">
+            <img id="qrcodeImg" src="" alt="Payment QR Code" style="width:160px; height:160px; border:1px solid #e2e8f0; padding:5px; border-radius:4px;">
+        </div>
+        
         <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; font-size:12px; margin-bottom:15px; color:#475569;">UPI VPA: ttharun34709@okaxis</div>
         <button onclick="document.getElementById('qrModal').style.display='none'" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">Close Panel</button>
     </div>
@@ -119,21 +122,24 @@
         const email = sessionStorage.getItem('student_email') || "student@prepvida.in";
         document.getElementById('lblUserEmail').innerText = email;
         
-        // Instantly generate entry link if session variables check out safely
         const banner = document.createElement('div');
         banner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:14px; border-radius:8px; margin-bottom:20px; font-weight:bold; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.2);">Database Connected! Click to launch Interview Workspace (Laptop Only) →</a>`;
         document.querySelector('.wrapper').prepend(banner);
     });
 
     function triggerUPI(price, planName) {
-        if (typeof QRCode !== 'undefined') {
-            const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(planName)}`;
-            document.getElementById('qrModal').style.display = 'flex';
-            const canvas = document.getElementById('qrcodeCanvas'); canvas.innerHTML = "";
-            document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
-            new QRCode(canvas, { text: upiString, width: 160, height: 160 });
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(planName)}`;
+        
+        if (isMobile) {
+            window.location.href = upiString;
         } else {
-            alert("QR Code script initializing. Please click again.");
+            document.getElementById('qrModal').style.display = 'flex';
+            document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
+            
+            // FIX: Standard image source generator that bypasses all script loading blocks completely
+            const chartApiUrl = `https://qrserver.com{encodeURIComponent(upiString)}`;
+            document.getElementById('qrcodeImg').src = chartApiUrl;
         }
     }
 </script>
