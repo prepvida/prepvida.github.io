@@ -147,24 +147,20 @@
     }
 function triggerUPI(price, planName) {
     try {
-        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${planName.replace(/\s+/g, '')}`;
+        // 1. Force remove all spaces so banking text parameters strictly conform to UPI protocols
+        const cleanPlan = String(planName).replace(/[^a-zA-Z0-9]/g, '');
+        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${cleanPlan}`;
         
-        // Displays your popup checkout screen
+        // 2. Open up your modal overlay container visually
         document.getElementById('qrModal').style.display = 'flex';
         document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
         
-        // Clear out any old QR codes first
-        const qrContainer = document.getElementById('qrcodeImg');
-        qrContainer.innerHTML = "";
+        // 3. Safe, globally open-source universal query encoder
+        const safeData = encodeURIComponent(upiString);
+        document.getElementById('qrcodeImg').src = `https://qrserver.com{safeData}`;
         
-        // Generate the QR code locally in the browser instantly
-        new QRCode(qrContainer, {
-            text: upiString,
-            width: 220,
-            height: 220
-        });
     } catch (e) {
-        console.error("Local payment generation failed:", e);
+        console.error("Local interface compilation fallback failed:", e);
     }
 }
 </script>
