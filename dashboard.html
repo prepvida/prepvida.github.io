@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cloudflare.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PrepVida - Subscription Plans Matrix</title>
@@ -144,17 +145,26 @@
             }
         } catch (e) { }
     }
-
 function triggerUPI(price, planName) {
     try {
-const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${planName.replace(/\s+/g, '')}`;        
+        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${planName.replace(/\s+/g, '')}`;
+        
         // Displays your popup checkout screen
         document.getElementById('qrModal').style.display = 'flex';
         document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
         
-        // Fast, active QR code generator engine
-document.getElementById('qrcodeImg').src = `https://quickchart.io{encodeURIComponent(upiString)}`;    } catch (e) {
-        console.error("Payment generation error:", e);
+        // Clear out any old QR codes first
+        const qrContainer = document.getElementById('qrcodeImg');
+        qrContainer.innerHTML = "";
+        
+        // Generate the QR code locally in the browser instantly
+        new QRCode(qrContainer, {
+            text: upiString,
+            width: 220,
+            height: 220
+        });
+    } catch (e) {
+        console.error("Local payment generation failed:", e);
     }
 }
 </script>
