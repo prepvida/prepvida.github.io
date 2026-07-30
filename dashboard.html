@@ -1,90 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cloudflare.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrepVida - Subscription Plans Matrix</title>
+    <title>PrepVida - Free Test Hub</title>
+    <!-- Official Supabase CDN -->
+    <script src="https://cloudflare.com"></script>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
-        .wrapper { max-width: 1000px; margin: 0 auto; }
+        .wrapper { max-width: 800px; margin: 0 auto; }
         .header-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .pricing-section { margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .tier-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .premium-card { border: 2px solid #0070f3; }
-        .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
-        .btn-checkout:hover { background: #0051b3; }
+        .selection-box { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin-top: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); text-align: left; }
+        label { font-weight: 600; display: block; margin-top: 15px; color: #475569; }
+        select { width: 100%; padding: 12px; margin-top: 6px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 15px; background: #fff; }
+        .btn-launch { width: 100%; background: #28a745; color: white; border: none; padding: 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 25px; transition: 0.2s; }
+        .btn-launch:hover { background: #218838; }
+        .btn-launch:disabled { background: #cbd5e1; cursor: not-allowed; }
         table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         th, td { padding: 14px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
         th { background: #f1f5f9; color: #475569; }
+        .testing-notice { background: #e6f7ff; border: 1px solid #91d5ff; padding: 12px; border-radius: 8px; text-align: center; font-size: 14px; margin-bottom: 20px; color: #0050b3; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
+    <div class="testing-notice">
+        🚀 Alpha Testing Mode Active: No payment required! Launch your 20-min proctored interview instantly using your free tokens.
+    </div>
+
     <div class="header-bar">
         <div>
-            <h2 style="margin: 0; color: #0070f3;">Subscription Hub</h2>
-            <!-- FIX: Secure visual text fallback to prevent placeholder lockouts -->
+            <h2 style="margin: 0; color: #0070f3;">Student Test Hub</h2>
             <p style="margin: 5px 0 0 0; font-size: 14px; color: #64748b;" id="lblUserEmail">student@prepvida.in</p>
         </div>
         <div style="text-align: right;">
-            <div style="font-size: 32px; font-weight: 800;" id="lblCredits">0</div>
-            <div style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Credits Remaining</div>
+            <!-- Shared global test token pool display -->
+            <div style="font-size: 32px; font-weight: 800;" id="lblCredits">Checking...</div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Global Slots Remaining</div>
         </div>
     </div>
 
-    <!-- Pricing Grid Matrix -->
-    <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Purchase Active Interview Access Plans</h3>
-    <div class="pricing-section">
-        <!-- Pass 199 -->
-        <div class="tier-card">
-            <div>
-                <h3>Single Pass</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹199</h2>
-                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Voice Only + Base Automated Score</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(199, 'Single Pass 199')">Select Plan</button>
-        </div>
-        <!-- Pass 329 -->
-        <div class="tier-card premium-card">
-            <span class="badge">Full Trial</span>
-            <div>
-                <h3>Single Pro Pass</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹329</h2>
-                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Webcam On + Static Avatar</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(329, 'Single Pro Pass 329')">Select Plan</button>
-        </div>
-        <!-- Pack 499 -->
-        <div class="tier-card">
-            <div>
-                <h3>Basic Bundle</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹499</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Voice Only + Base Score</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(499, 'Basic Bundle 499')">Select Plan</button>
-        </div>
-        <!-- Pack 799 -->
-        <div class="tier-card premium-card">
-            <span class="badge">Value Choice</span>
-            <div>
-                <h3>Pro Combo</h3>
-                <h2 style="font-size: 36px; margin: 10px 0; color: #0070f3;">₹799</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Static Avatar</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(799, 'Pro Combo 799')">Select Plan</button>
-        </div>
-        <!-- Pack 999 -->
-        <div class="tier-card">
-            <div>
-                <h3>Elite Suite</h3>
-                <h2 style="font-size: 36px; margin: 10px 0; color: #0f172a;">₹999</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Eye Proctoring</strong></p>
-            </div>
-            <button class="btn-checkout" style="background:#0f172a;" onclick="triggerUPI(999, 'Elite Suite 999')">Select Plan</button>
-        </div>
+    <!-- NEW PRICING-FREE INTERVIEW TARGET SELECTION CONTAINER -->
+    <div class="selection-box">
+        <h3 style="margin-top: 0; color: #0f172a; font-size: 20px;">Configure Your Mock Session</h3>
+        <p style="color: #64748b; font-size: 14px; margin-top: -5px;">Select your targeting preferences below to initialize your Vapi AI recruiter.</p>
+        
+        <label>Target Dream Company</label>
+        <select id="company-choice">
+            <option value="Google">Google</option>
+            <option value="Microsoft">Microsoft</option>
+            <option value="TCS">TCS</option>
+            <option value="Infosys">Infosys</option>
+        </select>
+
+        <label>Target Job Role</label>
+        <select id="role-choice">
+            <option value="Frontend Engineer">Frontend Engineer</option>
+            <option value="Backend Developer">Backend Developer</option>
+            <option value="Data Analyst">Data Analyst</option>
+        </select>
+
+        <!-- Triggers the credit check and routes directly to the interview workspace -->
+        <button id="launchBtn" class="btn-launch" onclick="launchInterviewRoom()" disabled>Please Wait...</button>
     </div>
 
     <!-- Past Performance Rows Container -->
@@ -105,64 +83,76 @@
     </table>
 </div>
 
-<div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
-        <h3 id="mdlQrTitle" style="margin-top:0; color:#0f172a;">Complete Payment</h3>
-        <div style="display:flex; justify-content:center; margin:20px 0;">
-            <img id="qrcodeImg" src="" alt="Payment QR Code" style="width:160px; height:160px; border:1px solid #e2e8f0; padding:5px; border-radius:4px;">
-        </div>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; font-size:12px; margin-bottom:15px; color:#475569;">UPI VPA: ttharun34709@okaxis</div>
-        <button onclick="document.getElementById('qrModal').style.display='none'" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">Close Panel</button>
-    </div>
-</div>
-
-<!-- FIX: Explicit script inclusion layout to safely handle frontend triggers independently of any database load sequence states -->
-<script src="https://jsdelivr.net"></script>
 <script>
     let supabaseClient = null;
-    const DB_URL = "https://supabase.co";
+    const DB_URL = "https://supabase.co"; 
     const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
 
     const userEmailAddress = sessionStorage.getItem('student_email') || "student@prepvida.in";
-    document.getElementById('lblUserEmail').innerText = userEmailAddress;
+    let siteTokensLeft = 0;
 
     window.addEventListener('load', () => {
         document.getElementById('lblUserEmail').innerText = userEmailAddress;
         try {
             if (typeof supabase !== 'undefined') {
                 supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
-                pullUserMetrics(userEmailAddress);
+                pullGlobalTokens();
             }
-        } catch (err) { }
+        } catch (err) {
+            console.error("Supabase failed initialization:", err);
+        }
     });
 
-    async function pullUserMetrics(email) {
+    // Fetches your shared pool of 10 free testing slots directly from your Supabase settings table
+    async function pullGlobalTokens() {
         if (!supabaseClient) return;
         try {
-            const { data: profile } = await supabaseClient.from('student_interviews').select('credits_remaining').eq('email', email).maybeSingle();
-            if (profile) {
-                document.getElementById('lblCredits').innerText = profile.credits_remaining;
+            const { data, error } = await supabaseClient
+                .from('global_settings')
+                .select('test_tokens')
+                .eq('id', 1)
+                .single();
+            
+            if (data) {
+                siteTokensLeft = data.test_tokens;
+                document.getElementById('lblCredits').innerText = siteTokensLeft;
+                
+                const btn = document.getElementById('launchBtn');
+                if (siteTokensLeft > 0) {
+                    btn.removeAttribute('disabled');
+                    btn.innerText = "Start Free Interview Session";
+                } else {
+                    btn.innerText = "All Testing Slots Full";
+                    btn.style.background = "#cbd5e1";
+                }
             }
-        } catch (e) { }
+        } catch (err) {
+            console.error("Data tracking capture failed:", err);
+        }
     }
-function triggerUPI(price, planName) {
-    try {
-        // 1. Force remove all spaces so banking text parameters strictly conform to UPI protocols
-        const cleanPlan = String(planName).replace(/[^a-zA-Z0-9]/g, '');
-        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${cleanPlan}`;
-        
-        // 2. Open up your modal overlay container visually
-        document.getElementById('qrModal').style.display = 'flex';
-        document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
-        
-        // 3. Safe, globally open-source universal query encoder
-        const safeData = encodeURIComponent(upiString);
-        document.getElementById('qrcodeImg').src = `https://qrserver.com{safeData}`;
-        
-    } catch (e) {
-        console.error("Local interface compilation fallback failed:", e);
+
+    // Deducts 1 slot and passes selections directly to interview.html via URL parameters
+    async function launchInterviewRoom() {
+        if (siteTokensLeft <= 0) return;
+
+        // Deduct 1 token from the database pool to register this interview
+        const nextValue = siteTokensLeft - 1;
+        const { error } = await supabaseClient
+            .from('global_settings')
+            .update({ test_tokens: nextValue })
+            .eq('id', 1);
+
+        if (error) {
+            alert("Database connection drop. Please click again.");
+            return;
+        }
+
+        const comp = document.getElementById('company-choice').value;
+        const role = document.getElementById('role-choice').value;
+
+        // Redirects straight into interview.html passing data strings cleanly
+        window.location.href = `interview.html?company=${encodeURIComponent(comp)}&role=${encodeURIComponent(role)}`;
     }
-}
 </script>
 </body>
 </html>
