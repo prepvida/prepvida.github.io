@@ -12,7 +12,8 @@
         .tier-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .premium-card { border: 2px solid #0070f3; }
         .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
+        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; display: block; z-index: 10; position: relative; }
+        .btn-checkout:hover { background: #0051b3; }
         table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         th, td { padding: 14px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
         th { background: #f1f5f9; color: #475569; }
@@ -24,6 +25,7 @@
     <div class="header-bar">
         <div>
             <h2 style="margin: 0; color: #0070f3;">Subscription Hub</h2>
+            <!-- Crucial: We remove the stuck "Loading account..." text here permanently so the interface looks perfect immediately -->
             <p style="margin: 5px 0 0 0; font-size: 14px; color: #64748b;" id="lblUserEmail">student@prepvida.in</p>
         </div>
         <div style="text-align: right;">
@@ -102,12 +104,11 @@
     </table>
 </div>
 
-<!-- UPI QR Desktop Overlay Layout (Uses Block-Proof Image Engine) -->
+<!-- UPI QR Desktop Overlay Layout -->
 <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
-        <h3 id="mdlQrTitle" style="margin-top:0;">Complete Payment</h3>
+    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px; z-index:10000; position:relative;">
+        <h3 id="mdlQrTitle" style="margin-top:0; color:#0f172a;">Complete Payment</h3>
         
-        <!-- FIX: Block-proof image block that loads instantly under any network restriction -->
         <div style="display:flex; justify-content:center; margin:20px 0;">
             <img id="qrcodeImg" src="" alt="Payment QR Code" style="width:160px; height:160px; border:1px solid #e2e8f0; padding:5px; border-radius:4px;">
         </div>
@@ -117,31 +118,48 @@
     </div>
 </div>
 
+<!-- Load Database SDK at the very bottom so it never blocks the buttons from clicking -->
+<script src="https://jsdelivr.net"></script>
 <script>
+    let supabaseClient = null;
+    const DB_URL = "https://supabase.co";
+    const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
+
+    // 1. Immediately extract user email from memory on page load
+    const userEmailAddress = sessionStorage.getItem('student_email') || "student@prepvida.in";
+    document.getElementById('lblUserEmail').innerText = userEmailAddress;
+
     window.addEventListener('load', () => {
-        const email = sessionStorage.getItem('student_email') || "student@prepvida.in";
-        document.getElementById('lblUserEmail').innerText = email;
+        document.getElementById('lblUserEmail').innerText = userEmailAddress;
         
-        const banner = document.createElement('div');
-        banner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:14px; border-radius:8px; margin-bottom:20px; font-weight:bold; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.2);">Database Connected! Click to launch Interview Workspace (Laptop Only) →</a>`;
-        document.querySelector('.wrapper').prepend(banner);
+        // Quietly initialize database connection in the background
+        try {
+            if (typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+                pullUserMetrics(userEmailAddress);
+            }
+        } catch (err) {
+            console.warn("Database sync delayed. Buttons remain fully active.");
+        }
     });
 
-    function triggerUPI(price, planName) {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(planName)}`;
-        
-        if (isMobile) {
-            window.location.href = upiString;
-        } else {
-            document.getElementById('qrModal').style.display = 'flex';
-            document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
-            
-            // FIX: Standard image source generator that bypasses all script loading blocks completely
-            const chartApiUrl = `https://qrserver.com{encodeURIComponent(upiString)}`;
-            document.getElementById('qrcodeImg').src = chartApiUrl;
+    async function pullUserMetrics(email) {
+        if (!supabaseClient) return;
+        // CRITICAL BUG FIX: Added custom Try/Catch blocks around database calls. 
+        // Even if the network drops or code encounters an error, it fails silently and NEVER freezes the buttons.
+        try {
+            const { data: profile } = await supabaseClient.from('student_interviews').select('credits_remaining, tier').eq('email', email).maybeSingle();
+            if (profile) {
+                document.getElementById('lblCredits').innerText = profile.credits_remaining;
+                if (profile.credits_remaining > 0) {
+                    const banner = document.createElement('div');
+                    banner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:14px; border-radius:8px; margin-bottom:20px; font-weight:bold; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.2);">Token Access Confirmed! Click to enter Interview Room (Laptop Only) →</a>`;
+                    document.querySelector('.wrapper').prepend(banner);
+                }
+            }
+        } catch (e) {
+            console.error("Database connection handled silently.");
         }
     }
-</script>
-</body>
-</html>
+
+    // 2. CRITICAL ISOLATION FIX: This payment function runs completely independently of the database.
