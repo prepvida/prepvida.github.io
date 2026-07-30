@@ -12,7 +12,7 @@
         .tier-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .premium-card { border: 2px solid #0070f3; }
         .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; display: block; z-index: 10; position: relative; }
+        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
         .btn-checkout:hover { background: #0051b3; }
         table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         th, td { padding: 14px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
@@ -33,7 +33,6 @@
         </div>
     </div>
 
-    <!-- Pricing Grid Matrix -->
     <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Purchase Active Interview Access Plans</h3>
     <div class="pricing-section">
         <div class="tier-card">
@@ -47,9 +46,9 @@
         <div class="tier-card premium-card">
             <span class="badge">Full Trial</span>
             <div>
-                <h3 style="color:#0070f3;">Single Pro Pass</h3>
+                <h3>Single Pro Pass</h3>
                 <h2 style="font-size: 36px; margin: 10px 0;">₹329</h2>
-                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Webcam On + Static Avatar + Full Audio Playback sent</strong></p>
+                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Webcam On + Static Avatar</strong></p>
             </div>
             <button class="btn-checkout" onclick="triggerUPI(329, 'Single Pro Pass 329')">Select Plan</button>
         </div>
@@ -57,16 +56,16 @@
             <div>
                 <h3>Basic Bundle</h3>
                 <h2 style="font-size: 36px; margin: 10px 0;">₹499</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Voice Only + Base Score (No audio recording unlocked)</strong></p>
+                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Voice Only + Base Score</strong></p>
             </div>
             <button class="btn-checkout" onclick="triggerUPI(499, 'Basic Bundle 499')">Select Plan</button>
         </div>
         <div class="tier-card premium-card">
             <span class="badge">Value Choice</span>
             <div>
-                <h3 style="color:#0070f3;">Pro Combo</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹799</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Static Avatar + Performance metrics + Full Playback</strong></p>
+                <h3>Pro Combo</h3>
+                <h2 style="font-size: 36px; margin: 10px 0; color: #0070f3;">₹799</h2>
+                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Static Avatar</strong></p>
             </div>
             <button class="btn-checkout" onclick="triggerUPI(799, 'Pro Combo 799')">Select Plan</button>
         </div>
@@ -74,13 +73,12 @@
             <div>
                 <h3>Elite Suite</h3>
                 <h2 style="font-size: 36px; margin: 10px 0; color: #0f172a;">₹999</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Dynamic Eye-Tracking Guard + Full Audio Logs Delivery</strong></p>
+                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Eye Proctoring</strong></p>
             </div>
             <button class="btn-checkout" style="background:#0f172a;" onclick="triggerUPI(999, 'Elite Suite 999')">Select Plan</button>
         </div>
     </div>
 
-    <!-- Past Performance Table Logs -->
     <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Your Performance Scoreboard Log</h3>
     <table>
         <thead>
@@ -98,15 +96,12 @@
     </table>
 </div>
 
-<!-- UPI QR Desktop Overlay -->
 <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px; z-index:10000; position:relative;">
+    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
         <h3 id="mdlQrTitle" style="margin-top:0; color:#0f172a;">Complete Payment</h3>
-        
         <div style="display:flex; justify-content:center; margin:20px 0;">
             <img id="qrcodeImg" src="" alt="Payment QR Code" style="width:160px; height:160px; border:1px solid #e2e8f0; padding:5px; border-radius:4px;">
         </div>
-        
         <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; font-size:12px; margin-bottom:15px; color:#475569;">UPI VPA: ttharun34709@okaxis</div>
         <button onclick="document.getElementById('qrModal').style.display='none'" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">Close Panel</button>
     </div>
@@ -123,46 +118,30 @@
 
     window.addEventListener('load', () => {
         document.getElementById('lblUserEmail').innerText = userEmailAddress;
-        
         try {
             if (typeof supabase !== 'undefined') {
                 supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
                 pullUserMetrics(userEmailAddress);
             }
-        } catch (err) {
-            console.warn("Database sync offline.");
-        }
+        } catch (err) { }
     });
 
     async function pullUserMetrics(email) {
         if (!supabaseClient) return;
         try {
-            // FIX: Removed syntax typo comma and replaced it with strict individual string columns configuration rules
             const { data: profile } = await supabaseClient.from('student_interviews').select('credits_remaining').eq('email', email).maybeSingle();
             if (profile) {
                 document.getElementById('lblCredits').innerText = profile.credits_remaining;
-                if (profile.credits_remaining > 0) {
-                    const banner = document.createElement('div');
-                    banner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:14px; border-radius:8px; margin-bottom:20px; font-weight:bold; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.2);">Token Access Confirmed! Click to enter Interview Room (Laptop Only) →</a>`;
-                    document.querySelector('.wrapper').prepend(banner);
-                }
             }
-        } catch (e) {
-            console.error("Silenced backend tracking glitch.");
-        }
+        } catch (e) { }
     }
 
     function triggerUPI(price, planName) {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(planName)}`;
-        
-        if (isMobile) {
-            window.location.href = upiString;
-        } else {
-            const chartApiUrl = `https://qrserver.com{encodeURIComponent(upiString)}`;
-            document.getElementById('qrcodeImg').src = chartApiUrl;
-            document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
-            document.getElementById('qrModal').style.display = 'flex';
-        }
+        document.getElementById('qrModal').style.display = 'flex';
+        document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
+        document.getElementById('qrcodeImg').src = `https://qrserver.com{encodeURIComponent(upiString)}`;
     }
 </script>
+</body>
+</html>
