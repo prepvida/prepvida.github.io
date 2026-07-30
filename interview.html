@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVida AI - Mock Interview Workspace</title>
+    <!-- Load Vapi Web SDK Voice Core -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- Load Supabase Direct SDK Core Integration -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 40px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #0070f3; margin-top: 0; }
+        .setup-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        label { font-weight: 600; display: block; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .search-container { position: relative; margin-bottom: 15px; }
+        .workspace { display: flex; gap: 20px; margin-top: 25px; min-height: 280px; display: none; }
+        .panel { flex: 1; background: #0f172a; border-radius: 8px; padding: 15px; text-align: center; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        .panel h3 { margin-top: 0; color: #94a3b8; }
+        video { width: 100%; height: 220px; border-radius: 6px; object-fit: cover; background: #1e293b; }
+        .avatar-pic { font-size: 80px; margin-bottom: 10px; animation: pulse 2s infinite ease-in-out; }
+        .btn { background: #0070f3; color: white; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; width: 100%; }
+        .btn:hover { background: #0051b3; }
+        .btn-stop { background: #dc2626; display: none; }
+        .btn-stop:hover { background: #b91c1c; }
+        .alert-box { background: #fef2f2; border: 1px solid #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-top: 20px; display: none; }
+        .suggestion-item:hover { background-color: #f1f5f9 !important; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PrepVida AI Interview Board</h1>
+    <p>Simulate official technical and HR screening assessment panels optimized up to 20 minutes.</p>
+
+    <!-- Student Configuration Area -->
+    <div class="setup-box" id="setupForm">
+        <label for="studentEmail">Your Registered Account Email</label>
+        <input type="email" id="studentEmail" placeholder="student@example.com" required>
+
+        <label for="subscriptionTier">Select Purchased Plan Matrix</label>
+        <select id="subscriptionTier" onchange="toggleTierPreview()">
+            <option value="basic">Basic Tier (₹499 - Voice Only)</option>
+            <option value="pro">Pro Tier (₹799 - Video Avatar + Active Webcam)</option>
+            <option value="elite">Elite Tier (₹999 - Full Evaluation + Eye Tracker Guard)</option>
+        </select>
+
+        <!-- Live B2B Corporate Database Query Search Field Layout -->
+        <div class="search-container">
+            <label style="font-weight: 600; display: block; margin-bottom: 8px;">Target Dream Company</label>
+            <input type="text" id="dreamCompany" placeholder="Type to search (e.g., Google, TCS, Amazon...)" oninput="searchLiveCompanies()" autocomplete="off" required>
+            <div id="companySuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 180px; overflow-y: auto; z-index: 999; display: none; margin-top: -10px;"></div>
+        </div>
+
+        <label for="targetRole">Target Domain Role</label>
+        <input type="text" id="targetRole" placeholder="e.g., Software Engineer, Data Analyst" required>
+
+        <button class="btn" onclick="startInterviewWorkflow()">Launch 20-Min Interview Session</button>
+    </div>
+
+    <!-- Active Call Stop Controls -->
+    <button class="btn btn-stop" id="stopBtn" onclick="terminateInterviewSession()">Terminate Session Safely</button>
+
+    <!-- Dynamic Interface Rendering Panels -->
+    <div class="workspace" id="interviewWorkspace">
+        <div class="panel" id="avatarPanel">
+            <h3>AI Interviewer</h3>
+            <div class="avatar-pic">🤖</div>
+            <p id="avatarStatus" style="color: #38bdf8; font-weight: bold;">Standby Engine</p>
+        </div>
+        <div class="panel" id="webcamPanel" style="display: none;">
+            <h3>Candidate Camera Feed</h3>
+            <video id="webcamFeed" autoplay playsinline muted></video>
+        </div>
+    </div>
+
+    <!-- Security Logger Notifications (Elite Mode) -->
+    <div class="alert-box" id="fraudAlertBox">
+        <strong style="display: block; margin-bottom: 5px;">⚠️ Proctoring Security Violations Logged:</strong>
+        <div id="fraudLog"></div>
+    </div>
+</div>
+
+<script>
+    let vapiInstance = null;
+    let localStream = null;
+    let trackingInterval = null;
+
+    // Link your configuration directly to your active project engine
+    const DB_URL = "https://supabase.co";
+    // CRITICAL: Reveal and paste your public 'anon' key from Supabase between quotes below
+    const DB_PUBLIC_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+    const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+
+    window.addEventListener('load', () => {
+        if (typeof Vapi !== 'undefined') {
+            // CRITICAL: Paste your public key from your Vapi Profile/Dashboard below
+            vapiInstance = new Vapi("YOUR_VAPI_PUBLIC_KEY"); 
+            
+            vapiInstance.on('call-start', () => {
+                document.getElementById('avatarStatus').innerText = "🔴 Live Interviewing...";
+                document.getElementById('avatarStatus').style.color = "#ef4444";
+            });
+
+            vapiInstance.on('call-end', () => {
+                cleanUpHardwareTracks();
+            });
+        }
+    });
+
+    async function searchLiveCompanies() {
+        const queryText = document.getElementById('dreamCompany').value.trim();
+        const dropdown = document.getElementById('companySuggestions');
+        
+        if (queryText.length < 1) { dropdown.style.display = 'none'; return; }
+
+        const { data: matches } = await supabaseClient
+            .from('company_listings')
+            .select('company_name, industry_sector')
+            .ilike('company_name', `%${queryText}%`)
+            .limit(5);
+
+        if (!matches || matches.length === 0) { dropdown.style.display = 'none'; return; }
+
+        dropdown.innerHTML = "";
+        matches.forEach(item => {
+            const row = document.createElement('div');
+            row.style.padding = '10px 15px'; row.style.cursor = 'pointer'; row.style.borderBottom = '1px solid #f1f5f9'; row.style.fontSize = '14px'; row.className = 'suggestion-item'; row.style.color = '#333';
+            row.innerHTML = `<strong>${item.company_name}</strong> <span style="color:#64748b; font-size:12px; float:right;">${item.industry_sector}</span>`;
+            
+            row.onclick = () => {
+                document.getElementById('dreamCompany').value = item.company_name;
+                dropdown.style.display = 'none';
+            };
+            dropdown.appendChild(row);
+        });
+        dropdown.style.display = 'block';
+    }
+
+    document.addEventListener('click', (e) => {
+        if (e.target.id !== 'dreamCompany') document.getElementById('companySuggestions').style.display = 'none';
+    });
+
+    function toggleTierPreview() {
+        const tier = document.getElementById('subscriptionTier').value;
+        const workspace = document.getElementById('interviewWorkspace');
+        const webcamPanel = document.getElementById('webcamPanel');
+        
+        if (tier === 'pro' || tier === 'elite') {
+            workspace.style.display = 'flex'; webcamPanel.style.display = 'block';
+        } else {
+            workspace.style.display = 'none'; webcamPanel.style.display = 'none';
+        }
+    }
+
+    async function startInterviewWorkflow() {
+        const email = document.getElementById('studentEmail').value;
+        const tier = document.getElementById('subscriptionTier').value;
+        const company = document.getElementById('dreamCompany').value;
+        const role = document.getElementById('targetRole').value;
+
+        if (!email || !company || !role) { alert("Please complete all configuration fields to proceed."); return; }
+
+        document.getElementById('setupForm').style.display = 'none';
+        document.getElementById('interviewWorkspace').style.display = 'flex';
+        document.getElementById('stopBtn').style.display = 'block';
+
+        if (tier === 'pro' || tier === 'elite') await bootWebcamHardware();
+        if (tier === 'elite') activateLightweightEyeTracker();
+
+        vapiInstance.start({
+            customer: { email: email },
+            assistant: {
+                model: {
+                    provider: "openai",
+                    model: "gpt-4o",
+                    messages: [
+                        {
+                            role: "system",
+                            content: `You are an executive technology hiring manager from ${company}. Conduct a formal screening interview with the user for a ${role} position. Ask standard behavioral, case, and conversational questions one at a time. Keep the interaction brief, professional, and strictly terminate your assessment cycle context under 20 minutes.`
+                        }
