@@ -1,23 +1,40 @@
-<script>
-    let supabaseClient = null;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVida AI - Login Gateway</title>
+    <!-- REMOVED DEFER: Forces the browser to load connection tools first so the button never freezes -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #0070f3; margin-top: 0; font-size: 32px; font-weight: 800; }
+        input { width: 100%; padding: 14px; margin: 20px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; background: #0070f3; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #0051b3; }
+    </style>
+</head>
+<body>
 
-    // 1. Initialize connection parameters immediately instead of waiting for page load
+<div class="login-card">
+    <h1>PrepVida AI</h1>
+    <p style="color: #475569; margin: 0; font-size: 15px;">Enter your email to access your mock interview station panel.</p>
+    <input type="email" id="loginEmail" placeholder="name@example.com" required>
+    <button class="btn" onclick="processSecureLogin()">Verify Account Credentials</button>
+</div>
+
+<script>
+    // Initialize connection channels right away
     const DB_URL = "https://supabase.co";
     const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
+    
+    // Connect to Supabase instantly
+    const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
 
     async function processSecureLogin() {
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         if (!email) { alert("Please input your registered email address."); return; }
-
-        // 2. Instantiate the database client on demand if it hasn't fired yet
-        if (!supabaseClient && typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
-        }
-        
-        if (!supabaseClient) { 
-            alert("Connection is establishing on your local network. Please tap Verify one more time right now!"); 
-            return; 
-        }
 
         sessionStorage.setItem('student_email', email);
 
@@ -59,3 +76,5 @@
         }
     }
 </script>
+</body>
+</html>
