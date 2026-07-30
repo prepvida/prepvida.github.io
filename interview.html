@@ -27,19 +27,32 @@
         .btn-stop:hover { background: #b91c1c; }
         .alert-box { background: #fef2f2; border: 1px solid #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-top: 20px; display: none; }
         .suggestion-item:hover { background-color: #f1f5f9 !important; }
+        
+        /* Mobile Restriction Guard Overlay View */
+        .mobile-restriction-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 99999; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; box-sizing: border-box; }
+        .mobile-restriction-overlay h2 { color: #ef4444; margin-bottom: 10px; }
+        
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Device Restriction Shield View Component Container -->
+<div id="deviceRestrictionShield" class="mobile-restriction-overlay">
+    <div style="font-size: 64px; margin-bottom: 20px;">💻</div>
+    <h2>Laptop/Desktop Required</h2>
+    <p style="font-size: 16px; color: #94a3b8; max-width: 400px; margin-bottom: 25px;">To maintain realistic standards, video validation, and proctoring safeguards, mock interview rooms are strictly disabled on smartphones.</p>
+    <a href="dashboard.html" style="color: #38bdf8; font-weight: bold; text-decoration: none; border: 1px solid #38bdf8; padding: 10px 20px; border-radius: 6px;">Return to Mobile Dashboard</a>
+</div>
+
+<div class="container" id="mainWorkspaceContainer">
     <h1>PrepVida AI Interview Board</h1>
     <p>Simulate official technical and HR screening assessment panels optimized up to 20 minutes.</p>
 
     <!-- Student Configuration Area -->
     <div class="setup-box" id="setupForm">
         <label for="studentEmail">Your Registered Account Email</label>
-        <input type="email" id="studentEmail" placeholder="student@example.com" required>
+        <input type="email" id="studentEmail" placeholder="student@example.com" readonly>
 
         <label for="subscriptionTier">Select Purchased Plan Matrix</label>
         <select id="subscriptionTier" onchange="toggleTierPreview()">
@@ -52,7 +65,7 @@
         <div class="search-container">
             <label style="font-weight: 600; display: block; margin-bottom: 8px;">Target Dream Company</label>
             <input type="text" id="dreamCompany" placeholder="Type to search (e.g., Google, TCS, Amazon...)" oninput="searchLiveCompanies()" autocomplete="off" required>
-            <div id="companySuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 180px; overflow-y: auto; z-index: 999; display: none; margin-top: -10px;"></div>
+            <div id="companySuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); max-height: 180px; overflow-y: auto; z-index: 999; display: none; margin-top: 4px;"></div>
         </div>
 
         <label for="targetRole">Target Domain Role</label>
@@ -89,15 +102,30 @@
     let localStream = null;
     let trackingInterval = null;
 
-    // Link your configuration directly to your active project engine
     const DB_URL = "https://supabase.co";
-    // CRITICAL: Reveal and paste your public 'anon' key from Supabase between quotes below
-    const DB_PUBLIC_KEY = "YOUR_SUPABASE_ANON_KEY"; 
+    const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI"; 
     const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
 
+    // Hard Hardware Platform Shield Assertions
     window.addEventListener('load', () => {
+        const isMobileDevice = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        
+        if (isMobileDevice) {
+            // Block completely and reveal the mobile shield overlay
+            document.getElementById('deviceRestrictionShield').style.display = 'flex';
+            document.getElementById('mainWorkspaceContainer').style.display = 'none';
+            return;
+        }
+
+        const activeEmailSession = sessionStorage.getItem('student_email');
+        if (!activeEmailSession) {
+            window.location.href = "index.html";
+            return;
+        }
+        document.getElementById('studentEmail').value = activeEmailSession;
+
         if (typeof Vapi !== 'undefined') {
-            // CRITICAL: Paste your public key from your Vapi Profile/Dashboard below
+            // Replace with your exact Vapi Public Token string block
             vapiInstance = new Vapi("YOUR_VAPI_PUBLIC_KEY"); 
             
             vapiInstance.on('call-start', () => {
@@ -105,9 +133,7 @@
                 document.getElementById('avatarStatus').style.color = "#ef4444";
             });
 
-            vapiInstance.on('call-end', () => {
-                cleanUpHardwareTracks();
-            });
+            vapiInstance.on('call-end', () => { cleanUpHardwareTracks(); });
         }
     });
 
@@ -146,39 +172,3 @@
 
     function toggleTierPreview() {
         const tier = document.getElementById('subscriptionTier').value;
-        const workspace = document.getElementById('interviewWorkspace');
-        const webcamPanel = document.getElementById('webcamPanel');
-        
-        if (tier === 'pro' || tier === 'elite') {
-            workspace.style.display = 'flex'; webcamPanel.style.display = 'block';
-        } else {
-            workspace.style.display = 'none'; webcamPanel.style.display = 'none';
-        }
-    }
-
-    async function startInterviewWorkflow() {
-        const email = document.getElementById('studentEmail').value;
-        const tier = document.getElementById('subscriptionTier').value;
-        const company = document.getElementById('dreamCompany').value;
-        const role = document.getElementById('targetRole').value;
-
-        if (!email || !company || !role) { alert("Please complete all configuration fields to proceed."); return; }
-
-        document.getElementById('setupForm').style.display = 'none';
-        document.getElementById('interviewWorkspace').style.display = 'flex';
-        document.getElementById('stopBtn').style.display = 'block';
-
-        if (tier === 'pro' || tier === 'elite') await bootWebcamHardware();
-        if (tier === 'elite') activateLightweightEyeTracker();
-
-        vapiInstance.start({
-            customer: { email: email },
-            assistant: {
-                model: {
-                    provider: "openai",
-                    model: "gpt-4o",
-                    messages: [
-                        {
-                            role: "system",
-                            content: `You are an executive technology hiring manager from ${company}. Conduct a formal screening interview with the user for a ${role} position. Ask standard behavioral, case, and conversational questions one at a time. Keep the interaction brief, professional, and strictly terminate your assessment cycle context under 20 minutes.`
-                        }
