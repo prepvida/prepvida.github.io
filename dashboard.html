@@ -147,8 +147,7 @@
 
 function triggerUPI(price, planName) {
     try {
-        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${planName}`;
-        
+const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida${planName.replace(/\s+/g, '')}`;        
         // Displays your popup checkout screen
         document.getElementById('qrModal').style.display = 'flex';
         document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
