@@ -145,12 +145,16 @@
         } catch (e) { }
     }
 
-    function triggerUPI(price, planName) {
-        // Isolated unblockable payment trigger
-        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(planName)}`;
+ function triggerUPI(price, planName) {
+    try {
+        const upiString = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${planName}`;
+        
+        // Displays your popup checkout screen
         document.getElementById('qrModal').style.display = 'flex';
         document.getElementById('mdlQrTitle').innerText = `Pay ₹${price} for ${planName}`;
-document.getElementById('qrcodeImg').src = `https://qrserver.com{encodeURIComponent(upiString)}`;
+        
+        // Fast, active QR code generator engine
+        document.getElementById('qrcodeImg').src = `https://qrserver.com{encodeURIComponent(upiString)}`;
     } catch (e) {
         console.error("Payment generation error:", e);
     }
