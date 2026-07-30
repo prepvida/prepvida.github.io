@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVida - Student Interview Dashboard</title>
+    <!-- Load Supabase Web SDK Direct Integration Layout -->
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 40px; }
+        .dashboard-container { max-width: 1100px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 20px 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .header h1 { margin: 0; color: #0070f3; font-size: 24px; }
+        .search-box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 25px; display: flex; gap: 15px; align-items: center; }
+        .search-box input { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 16px; }
+        .btn { background: #0070f3; color: white; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background: #0051b3; }
+        .profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; display: none; }
+        .metrics-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); height: fit-content; }
+        .metric-badge { font-size: 48px; font-weight: bold; color: #0f172a; margin: 15px 0 5px 0; }
+        .tier-label { display: inline-block; padding: 4px 12px; background: #e0f2fe; color: #0369a1; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .history-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 12px; background: #f1f5f9; color: #475569; font-weight: 600; font-size: 14px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        .btn-view { background: #f1f5f9; color: #334155; padding: 6px 12px; font-size: 13px; border-radius: 4px; font-weight: 600; text-decoration: none; cursor: pointer; border: 1px solid #cbd5e1; }
+        .btn-view:hover { background: #e2e8f0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 700px; max-height: 80vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 18px; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; font-size: 15px; line-height: 1.6; }
+        .transcript-text { background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; white-space: pre-line; max-height: 300px; overflow-y: auto; }
+        .score-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="header">
+        <h1>PrepVida Student Workspace</h1>
+        <a href="interview.html" class="btn" style="text-decoration: none; font-size: 14px; padding: 10px 20px;">Start New Interview</a>
+    </div>
+
+    <div class="search-box">
+        <input type="email" id="dashboardEmail" placeholder="Enter your registered account email to view metrics...">
+        <button class="btn" onclick="fetchStudentDashboardData()">Access Records</button>
+    </div>
+
+    <div class="profile-grid" id="profileGrid">
+        <div class="metrics-card">
+            <span class="tier-label" id="lblTier">Basic Plan</span>
+            <div class="metric-badge" id="lblCredits">0</div>
+            <p style="color: #64748b; margin: 0 0 20px 0; font-size: 14px; font-weight: 500;">Interview Credits Remaining</p>
+            <div style="font-size: 13px; color: #475569; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+                <strong>Payment Status:</strong> <span id="lblPayment" style="color: #16a34a; font-weight: bold;">Verified</span>
+            </div>
+        </div>
+
+        <div class="history-card">
+            <h2 style="margin-top: 0; font-size: 18px; color: #0f172a;">Your Comprehensive Session Logs</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date Track</th>
+                            <th>Company Target</th>
+                            <th>Evaluation Score</th>
+                            <th>Recording File</th>
+                            <th>Report Analysis</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="reportModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="mdlTitle">Detailed Evaluation Report</h3>
+            <button onclick="closeReportModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h4>Performance Summary Metrics</h4>
+            <div id="mdlScores" style="margin-bottom: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px;"></div>
+            
+            <h4>Full Conversation Transcript</h4>
+            <div class="transcript-text" id="mdlTranscript"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const DB_URL = "https://supabase.co";
+    // CRITICAL API KEY PLACEMENT CONTAINER
+    const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI"; 
+    
+    const supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+    let currentHistoryData = [];
+
+    async function fetchStudentDashboardData() {
+        const email = document.getElementById('dashboardEmail').value.trim();
+        if (!email) { alert("Please input a valid email address."); return; }
+
+        const { data: profile, error: profileErr } = await supabaseClient
+            .from('student_interviews')
+            .select('*')
+            .eq('email', email)
+            .maybeSingle();
+
+        if (profileErr) { alert("Database connection error. Please retry."); return; }
+        if (!profile) { alert("No active user profile found for this email address."); return; }
+
+        const { data: history, error: historyErr } = await supabaseClient
+            .from('interview_history')
+            .select('*')
+            .eq('student_email', email)
+            .order('created_at', { ascending: false });
+
+        currentHistoryData = history || [];
+
+        document.getElementById('lblTier').innerText = `${profile.tier} Plan`;
+        document.getElementById('lblCredits').innerText = profile.credits_remaining;
+        document.getElementById('lblPayment').innerText = profile.payment_status.toUpperCase();
+        
+        const tableBody = document.getElementById('historyTableBody');
+        tableBody.innerHTML = "";
+
+        if (currentHistoryData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">No interview records found for this account.</td></tr>`;
+        } else {
+            currentHistoryData.forEach((row, index) => {
+                const dateString = new Date(row.created_at).toLocaleDateString();
+                const scoreValue = row.score_json?.overall_score ? `${row.score_json.overall_score}/100` : "Processing...";
+                const audioLink = row.audio_url ? `<a href="${row.audio_url}" target="_blank" style="color:#0070f3; font-weight:600; text-decoration:none;">▶ Listen</a>` : "No Audio";
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${dateString}</td>
+                    <td><strong>${row.company_selected}</strong></td>
+                    <td><span style="background:#f0fdf4; color:#16a34a; padding:4px 8px; border-radius:4px; font-weight:bold;">${scoreValue}</span></td>
+                    <td>${audioLink}</td>
+                    <td><button class="btn-view" onclick="openReportModal(${index})">View Analysis</button></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+        document.getElementById('profileGrid').style.display = 'grid';
+    }
+
+    function openReportModal(index) {
+        const record = currentHistoryData[index];
+        if (!record) return;
+        document.getElementById('mdlTitle').innerText = `${record.company_selected} Analysis Report`;
+        document.getElementById('mdlTranscript').innerText = record.transcript || "No transcript logged.";
+
+        const scoreObj = record.score_json || {};
+        let scoreHtml = `<div class="score-row"><strong>Overall Score:</strong> <span>${scoreObj.overall_score || 0}/100</span></div>`;
+        scoreHtml += `<div class="score-row"><strong>Communication:</strong> <span>${scoreObj.communication || 0}/100</span></div>`;
