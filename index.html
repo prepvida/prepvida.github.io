@@ -3,170 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrepVida - Subscription Matrix</title>
-    <!-- FIX: Grouping the libraries neatly at the top with fail-safe triggers -->
-    <script src="https://cloudflare.com"></script>
+    <title>PrepVida AI - Login Gateway</title>
+    <!-- Direct direct integration script hook placed safely in head layout -->
     <script src="https://jsdelivr.net"></script>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 40px; color: #1e293b; }
-        .wrapper { max-width: 1000px; margin: 0 auto; }
-        .header-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .pricing-section { margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .tier-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .premium-card { border: 2px solid #0070f3; }
-        .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .btn-checkout { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        th, td { padding: 14px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-        th { background: #f1f5f9; color: #475569; }
-        .btn-modal { background: none; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #0070f3; margin-top: 0; font-size: 32px; font-weight: 800; }
+        input { width: 100%; padding: 14px; margin: 20px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn { width: 100%; background: #0070f3; color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #0051b3; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="header-bar">
-        <div>
-            <h2 style="margin: 0; color: #0070f3;">Subscription Hub</h2>
-            <p style="margin: 5px 0 0 0; font-size: 14px; color: #64748b;" id="lblUserEmail">Loading account...</p>
-        </div>
-        <div style="text-align: right;">
-            <div style="font-size: 32px; font-weight: 800;" id="lblCredits">0</div>
-            <div style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Credits Remaining</div>
-        </div>
-    </div>
-
-    <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Purchase Active Interview Access Plans</h3>
-    <div class="pricing-section">
-        <div class="tier-card">
-            <div>
-                <h3>Single Pass</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹199</h2>
-                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Voice Only + Base Automated Score</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(199, 'Single Pass ₹199')">Select Plan</button>
-        </div>
-        <div class="tier-card premium-card">
-            <span class="badge">Full Trial</span>
-            <div>
-                <h3 style="color:#0070f3;">Single Pro Pass</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹329</h2>
-                <p style="color: #64748b; font-size: 13px;">1 Interview Session.<br><strong>Webcam On + Static Avatar + Full Audio Playback sent</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(329, 'Single Pro Pass ₹329')">Select Plan</button>
-        </div>
-        <div class="tier-card">
-            <div>
-                <h3>Basic Bundle</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹499</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Voice Only + Base Score (No audio recording unlocked)</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(499, 'Basic Bundle ₹499')">Select Plan</button>
-        </div>
-        <div class="tier-card premium-card">
-            <span class="badge">Value Choice</span>
-            <div>
-                <h3 style="color:#0070f3;">Pro Combo</h3>
-                <h2 style="font-size: 36px; margin: 10px 0;">₹799</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Static Avatar + Performance metrics + Full Playback</strong></p>
-            </div>
-            <button class="btn-checkout" onclick="triggerUPI(799, 'Pro Combo ₹799')">Select Plan</button>
-        </div>
-        <div class="tier-card">
-            <div>
-                <h3>Elite Suite</h3>
-                <h2 style="font-size: 36px; margin: 10px 0; color: #0f172a;">₹999</h2>
-                <p style="color: #64748b; font-size: 13px;">3 Interview Sessions.<br><strong>Webcam On + Dynamic Eye-Tracking Guard + Full Audio Logs Delivery</strong></p>
-            </div>
-            <button class="btn-checkout" style="background:#0f172a;" onclick="triggerUPI(999, 'Elite Suite ₹999')">Select Plan</button>
-        </div>
-    </div>
-
-    <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Your Performance Scoreboard Log</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Session Date</th>
-                <th>Target Company / Domain Role</th>
-                <th>Performance Score Rating</th>
-                <th>Audio Recording Access</th>
-                <th>Comprehensive Report</th>
-            </tr>
-        </thead>
-        <tbody id="historyTableBody"></tbody>
-    </table>
-</div>
-
-<!-- UPI QR Desktop Overlay -->
-<div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center;">
-    <div style="background:white; padding:30px; border-radius:12px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); width:320px;">
-        <h3 id="mdlQrTitle" style="margin-top:0;">Complete Payment</h3>
-        <div id="qrcodeCanvas" style="display:flex; justify-content:center; margin:20px 0;"></div>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-weight:bold; font-size:12px; margin-bottom:15px; color:#475569;">UPI VPA: ttharun34709@okaxis</div>
-        <button onclick="document.getElementById('qrModal').style.display='none'" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">Close Panel</button>
-    </div>
+<div class="login-card">
+    <h1>PrepVida AI</h1>
+    <p style="color: #475569; margin: 0; font-size: 15px;">Enter your email to access your mock interview station panel.</p>
+    <input type="email" id="loginEmail" placeholder="name@example.com" required>
+    <button class="btn" onclick="processSecureLogin()">Verify Account Credentials</button>
 </div>
 
 <script>
     let supabaseClient = null;
-    let currentHistoryData = [];
-    let studentTier = 'basic';
-
-    // Safe direct startup loop
     const DB_URL = "https://supabase.co";
     const DB_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGp4b2xvcHR5Z2Jmanljc3IiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzA3MzA4OCwiZXhwIjoyMDU4NjQ5MDg4fQ.lO2oID66LzUf8Z2_p5K88WJtTz96R9p7Vf55oXjP2xI";
-    
-    if (typeof supabase !== 'undefined') {
-        supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
-    }
 
+    // FIX: Delay initialization until the page has fully compiled script dependencies
     window.addEventListener('load', () => {
-        const email = sessionStorage.getItem('student_email') || "test_user@prepvida.in";
-        document.getElementById('lblUserEmail').innerText = email;
-        
-        if (!supabaseClient && typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+        try {
+            if (typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+            }
+        } catch (e) {
+            console.error("Initialization error handled safely:", e);
         }
-        pullUserMetrics(email);
     });
 
-    async function pullUserMetrics(email) {
-        if (!supabaseClient) {
-            console.warn("Database client offline.");
-            return;
+    async function processSecureLogin() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        if (!email) { alert("Please input your registered email address."); return; }
+
+        // Double check connector initialization inside the button runtime trigger frame
+        if (!supabaseClient && typeof supabase !== 'undefined') {
+            try {
+                supabaseClient = supabase.createClient(DB_URL, DB_PUBLIC_KEY);
+            } catch (err) { }
         }
-        
+
+        if (!supabaseClient) { 
+            // Fallback: If database script delays, force navigation to the subscription hub cleanly anyway
+            window.location.href = "dashboard.html";
+            return; 
+        }
+
+        sessionStorage.setItem('student_email', email);
+
         try {
-            const { data: profile } = await supabaseClient.from('student_interviews').select('*').eq('email', email).maybeSingle();
-            if (profile) {
-                studentTier = profile.tier ? profile.tier.toLowerCase() : 'basic';
-                document.getElementById('lblCredits').innerText = profile.credits_remaining;
-                
-                if (profile.credits_remaining > 0) {
-                    sessionStorage.setItem('auth_token', 'passed_secure_gate');
-                    sessionStorage.setItem('active_tier', studentTier);
-                    const banner = document.createElement('div');
-                    banner.innerHTML = `<a href="interview.html" style="display:block; background:#16a34a; color:white; text-align:center; padding:14px; border-radius:8px; margin-bottom:20px; font-weight:bold; text-decoration:none; box-shadow:0 4px 10px rgba(22,163,74,0.2);">Token Access Confirmed! Click to enter Interview Room (Laptop Only) →</a>`;
-                    document.querySelector('.wrapper').prepend(banner);
-                }
+            let { data: profile, error } = await supabaseClient
+                .from('student_interviews')
+                .select('credits_remaining, tier')
+                .eq('email', email)
+                .maybeSingle();
+
+            if (error) { throw error; }
+
+            // Automatic auto-registration route loops for new students
+            if (!profile) {
+                const { data: newProfile, error: insertError } = await supabaseClient
+                    .from('student_interviews')
+                    .insert([{ 
+                        email: email, 
+                        credits_remaining: 0, 
+                        tier: 'basic', 
+                        payment_status: 'pending' 
+                    }])
+                    .select()
+                    .maybeSingle();
+
+                if (insertError) { throw insertError; }
+                profile = newProfile;
             }
 
-            const { data: history } = await supabaseClient.from('interview_history').select('*').eq('student_email', email).order('created_at', { ascending: false });
-            currentHistoryData = history || [];
-            renderTableLogs();
+            if (profile && profile.credits_remaining > 0) {
+                sessionStorage.setItem('auth_token', 'passed_secure_gate');
+                sessionStorage.setItem('active_tier', profile.tier);
+                window.location.href = "interview.html";
+            } else {
+                window.location.href = "dashboard.html";
+            }
         } catch (err) {
-            console.error(err);
+            console.warn("Handled network delay safely:", err.message);
+            window.location.href = "dashboard.html";
         }
     }
-
-    function renderTableLogs() {
-        const tableBody = document.getElementById('historyTableBody');
-        tableBody.innerHTML = "";
-
-        if (currentHistoryData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">No performance logs tracked yet for this token account.</td></tr>`;
-            return;
-        }
-
-        currentHistoryData.forEach((row, index) => {
-            let audioCell = `<span style="color:#94a3b8; font-style:italic;">🔒 Premium Locked</span>`;
+</script>
+</body>
+</html>
