@@ -1,48 +1,90 @@
-<!-- PrepVida Official 3-Tier Subscription Workspace -->
-<div class="pricing-container" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; font-family: 'Segoe UI', sans-serif; padding: 40px 20px;">
-    
-    <!-- 1. Basic Plan Tier (₹499) -->
-    <div class="card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; width: 280px; background: #fff; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box;">
-        <h3 style="color: #475569; margin-top:0;">Basic Prep</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepVida AI - Mock Interview Workspace</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 40px; }
+        .pricing-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        .card { border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; width: 280px; background: #fff; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box; }
+        .card-pro { border: 2px solid #0070f3; position: relative; box-shadow: 0 10px 15px rgba(0,0,0,0.05); }
+        .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 2px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .btn-pay { width: 100%; background: #0070f3; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .btn-pay-dark { background: #0f172a; }
+    </style>
+</head>
+<body>
+
+<div style="text-align: center; max-width: 900px; margin: 0 auto;">
+    <h1 style="color: #0070f3; margin-bottom: 5px;">PrepVida Subscription Workspace</h1>
+    <p style="color: #64748b; margin-top: 0;">Select your tier plan. Complete your UPI transaction to receive 3 interview credits.</p>
+</div>
+
+<!-- Updated Card Layout Engine -->
+<div class="pricing-container">
+    <!-- 1. Basic Plan Tier -->
+    <div class="card">
+        <h3>Basic Prep</h3>
         <h2 style="font-size: 36px; margin: 15px 0; color: #0f172a;">₹499</h2>
         <p style="color: #64748b; font-size: 14px; min-height: 50px;">3 AI Voice-to-Voice Interviews simulating standard 20-min screening rounds.</p>
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-        <a href="upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=499&cu=INR&tn=PrepVida%20Basic%20Subscription" 
-           style="display: block; background: #0070f3; color: white; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold;">
-           Pay via UPI App
-        </a>
+        <button class="btn-pay" onclick="handlePaymentTrigger(499, 'Basic Tier')">Pay via UPI App</button>
     </div>
 
-    <!-- 2. Pro Plan Tier (₹799) -->
-    <div class="card" style="border: 2px solid #0070f3; border-radius: 12px; padding: 24px; width: 280px; background: #fff; text-align: center; box-shadow: 0 10px 15px rgba(0,0,0,0.05); position: relative; box-sizing: border-box;">
-        <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0070f3; color: white; padding: 2px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase;">Popular</span>
+    <!-- 2. Pro Plan Tier -->
+    <div class="card card-pro">
+        <span class="badge">Popular</span>
         <h3 style="color: #0070f3; margin-top:0;">Pro Assessment</h3>
         <h2 style="font-size: 36px; margin: 15px 0; color: #0f172a;">₹799</h2>
         <p style="color: #64748b; font-size: 14px; min-height: 50px;">3 AI Voice Interviews + Active Web Camera Feed + Low-Cost Static AI Avatar.</p>
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-        <a href="upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=799&cu=INR&tn=PrepVida%20Pro%20Subscription" 
-           style="display: block; background: #0070f3; color: white; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold;">
-           Pay via UPI App
-        </a>
+        <button class="btn-pay" onclick="handlePaymentTrigger(799, 'Pro Tier')">Pay via UPI App</button>
     </div>
 
-    <!-- 3. Elite Plan Tier (₹999) -->
-    <div class="card" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 24px; width: 280px; background: #fff; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box;">
-        <h3 style="color: #475569; margin-top:0;">Elite Executive</h3>
+    <!-- 3. Elite Plan Tier -->
+    <div class="card">
+        <h3>Elite Executive</h3>
         <h2 style="font-size: 36px; margin: 15px 0; color: #0f172a;">₹999</h2>
         <p style="color: #64748b; font-size: 14px; min-height: 50px;">3 AI Interviews + Eye Tracking Security Proctoring + Recorded Audio logs sent back.</p>
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-        <a href="upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=999&cu=INR&tn=PrepVida%20Elite%20Subscription" 
-           style="display: block; background: #0f172a; color: white; text-decoration: none; padding: 12px; border-radius: 6px; font-weight: bold;">
-           Pay via UPI App
-        </a>
+        <button class="btn-pay btn-pay-dark" onclick="handlePaymentTrigger(999, 'Elite Tier')">Pay via UPI App</button>
     </div>
-
 </div>
 
-<!-- Portal Access Button Section -->
-<div style="text-align: center; margin-top: 30px; font-family: sans-serif;">
-    <p style="color: #64748b;">Already bought a pack?</p>
-    <a href="dashboard.html" style="color: #0070f3; font-weight: bold; text-decoration: none; margin-right: 20px;">Go to Student Dashboard →</a>
-    <a href="interview.html" style="color: #16a34a; font-weight: bold; text-decoration: none;">Launch AI Interview Room →</a>
+<!-- Navigation Portal Buttons -->
+<div style="text-align: center; margin-top: 40px; font-family: sans-serif;">
+    <p style="color: #64748b; margin-bottom: 10px;">Already bought a pack?</p>
+    <a href="dashboard.html" style="color: #0070f3; font-weight: bold; text-decoration: none; margin-right: 20px; font-size: 15px;">Go to Student Dashboard →</a>
+    <a href="interview.html" style="color: #16a34a; font-weight: bold; text-decoration: none; font-size: 15px;">Launch AI Interview Room →</a>
 </div>
+
+<!-- Dynamic Overlay Scan Box for Laptops -->
+<script src="https://cloudflare.com"></script>
+<div id="paymentModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.15); border:1px solid #cbd5e1; text-align:center; z-index:9999;">
+    <h3 id="modalTitle" style="margin-top:0; color:#0f172a;">Complete Subscription</h3>
+    <p style="font-size:14px; color:#64748b; margin-bottom:15px;">Scan this secure code using GPay, PhonePe, Paytm or BHIM</p>
+    <div id="qrcodeCanvas" style="display:flex; justify-content:center; margin:20px 0;"></div>
+    <div style="background:#f1f5f9; padding:10px; border-radius:6px; font-weight:bold; font-size:14px; margin-bottom:15px; color:#334155;">Pay Address: ttharun34709@okaxis</div>
+    <button onclick="document.getElementById('paymentModal').style.display='none'" style="background:#64748b; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">Cancel</button>
+</div>
+
+<script>
+function handlePaymentTrigger(price, tierName) {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const upiUrl = `upi://pay?pa=ttharun34709@okaxis&pn=PrepVida&am=${price}&cu=INR&tn=PrepVida%20${encodeURIComponent(tierName)}`;
+    
+    if (isMobile) {
+        window.location.href = upiUrl;
+    } else {
+        document.getElementById('paymentModal').style.display = 'block';
+        const canvas = document.getElementById('qrcodeCanvas');
+        canvas.innerHTML = "";
+        document.getElementById('modalTitle').innerText = `Pay ₹${price} for ${tierName}`;
+        new QRCode(canvas, { text: upiUrl, width: 180, height: 180 });
+    }
+}
+</script>
+
+</body>
+</html>
