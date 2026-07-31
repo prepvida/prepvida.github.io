@@ -104,6 +104,7 @@
 
    // Fetches your shared pool of 10 free testing slots directly from your Supabase settings table
 async function pullGlobalTokens() {
+    siteTokensLeft = 10;
     if (!supabaseClient) return;
     try {
         const { data, error } = await supabaseClient
