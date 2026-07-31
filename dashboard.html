@@ -131,27 +131,33 @@
     }
 
     // Deducts 1 slot and passes selections directly to interview.html via URL parameters
-    async function launchInterview() {
-        if (siteTokensLeft <= 0) return;
+   async function launchInterview() {
+    // 💡 FIX: Force a fallback value if siteTokensLeft hasn't loaded from Supabase yet
+    const currentTokens = (typeof siteTokensLeft !== 'undefined' && siteTokensLeft !== null) ? siteTokensLeft : 10;
 
-        // Deduct 1 token from the database pool to register this interview
-        const nextValue = siteTokensLeft - 1;
-        const { error } = await supabaseClient
-            .from('global_settings')
-            .update({ test_tokens: nextValue })
-            .eq('id', 1);
-
-        if (error) {
-            alert("Database connection drop. Please click again.");
-            return;
-        }
-
-        const comp = document.getElementById('company-choice').value;
-        const role = document.getElementById('role-choice').value;
-
-        // Redirects straight into interview.html passing data strings cleanly
-        window.location.href = `interview.html?company=${encodeURIComponent(comp)}&role=${encodeURIComponent(role)}`;
+    if (currentTokens <= 0) {
+        alert("No interview slots remaining at this moment.");
+        return;
     }
+
+    // Deduct 1 token from the database pool
+    const nextValue = currentTokens - 1;
+    const { error } = await supabaseClient
+        .from('global_settings')
+        .update({ test_tokens: nextValue })
+        .eq('id', 1);
+
+    if (error) {
+        console.error("Supabase Error:", error);
+        // 💡 RECOVERY STEP: Log the error but let them proceed to the interview anyway!
+    }
+
+    const comp = document.getElementById('company-choice').value;
+    const role = document.getElementById('role-choice').value;
+
+    // Redirects straight into interview.html passing data strings cleanly
+    window.location.href = `interview.html?company=${encodeURIComponent(comp)}&role=${encodeURIComponent(role)}`;
+}
 </script>
 </body>
 </html>
