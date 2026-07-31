@@ -102,34 +102,59 @@
         }
     });
 
-    // Fetches your shared pool of 10 free testing slots directly from your Supabase settings table
-    async function pullGlobalTokens() {
-        if (!supabaseClient) return;
-        try {
-            const { data, error } = await supabaseClient
-                .from('global_settings')
-                .select('test_tokens')
-                .eq('id', 1)
-                .single();
+   // Fetches your shared pool of 10 free testing slots directly from your Supabase settings table
+async function pullGlobalTokens() {
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient
+            .from('global_settings')
+            .select('test_tokens')
+            .eq('id', 1)
+            .single();
+
+        if (error) throw error;
+
+        if (data) {
+            siteTokensLeft = data.test_tokens;
             
-            if (data) {
-                siteTokensLeft = data.test_tokens;
-                document.getElementById('lblCredits').innerText = siteTokensLeft;
-                
-                const btn = document.getElementById('launchBtn');
+            // 💡 FIX 1: Safely update the credits label element if it exists
+            const creditsLabel = document.getElementById('lblCredits');
+            if (creditsLabel) {
+                creditsLabel.innerText = siteTokensLeft;
+            } else {
+                // Alternative check: try updating by finding text that matches "Checking..."
+                const allElements = document.getElementsByTagName('*');
+                for (let i = 0; i < allElements.length; i++) {
+                    if (allElements[i].innerText && allElements[i].innerText.includes('Checking...')) {
+                        allElements[i].innerHTML = `${siteTokensLeft} <span style="font-size:12px; display:block; color:#666;">GLOBAL SLOTS REMAINING</span>`;
+                        break;
+                    }
+                }
+            }
+
+            const btn = document.getElementById('launchBtn');
+            if (btn) {
                 if (siteTokensLeft > 0) {
                     btn.removeAttribute('disabled');
                     btn.innerText = "Start Free Interview Session";
                 } else {
+                    btn.setAttribute('disabled', 'true');
                     btn.innerText = "All Testing Slots Full";
                     btn.style.background = "#cbd5e1";
                 }
             }
-        } catch (err) {
-            console.error("Data tracking capture failed:", err);
+        }
+    } catch (err) {
+        console.error("Data tracking capture failed: ", err);
+        
+        // 💡 FIX 2: Emergency Fallback so your app still launches even if Supabase errors out
+        siteTokensLeft = 10;
+        const btn = document.getElementById('launchBtn');
+        if (btn) {
+            btn.removeAttribute('disabled');
         }
     }
-
+}
     // Deducts 1 slot and passes selections directly to interview.html via URL parameters
    async function launchInterview() {
     // 💡 FIX: Force a fallback value if siteTokensLeft hasn't loaded from Supabase yet
