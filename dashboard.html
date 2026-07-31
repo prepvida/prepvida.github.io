@@ -62,8 +62,7 @@
         </select>
 
         <!-- Triggers the credit check and routes directly to the interview workspace -->
-        <button id="launchBtn" class="btn-launch" onclick="launchInterviewRoom()" disabled>Please Wait...</button>
-    </div>
+<button id="launchBtn" class="btn-launch" onclick="launchInterview()">Launch Interview</button>    </div>
 
     <!-- Past Performance Rows Container -->
     <h3 style="margin-top: 40px; color: #0f172a; font-size: 20px;">Your Performance Scoreboard Log</h3>
@@ -132,7 +131,7 @@
     }
 
     // Deducts 1 slot and passes selections directly to interview.html via URL parameters
-    async function launchInterviewRoom() {
+    async function launchInterview() {
         if (siteTokensLeft <= 0) return;
 
         // Deduct 1 token from the database pool to register this interview
