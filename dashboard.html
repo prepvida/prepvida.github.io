@@ -142,32 +142,31 @@ async function pullGlobalTokens() {
 }
         // 💡 COMPLETELY DYNAMIC TRIGGER: Reads exactly what choice the student clicks on the screen
 async function launchInterview() {
-    console.log("Reading student mock interview selections...");
+    console.log("Processing custom student text entries...");
 
-    // 1. Check slot token pool balance
+    // 1. Check token balance safely
     const activeTokens = (typeof siteTokensLeft !== 'undefined' && siteTokensLeft !== null) ? siteTokensLeft : 10;
     if (activeTokens <= 0) {
         alert("All system beta test slots are currently full.");
         return;
     }
 
-    // 2. Automatically locate the dropdown elements by their tag order on your dashboard page
-    const companyDropdown = document.getElementById('company-choice') || document.querySelector('select:nth-of-type(1)');
-    const roleDropdown = document.getElementById('role-choice') || document.querySelector('select:nth-of-type(2)');
+    // 2. Read whatever text strings the student typed into the empty input fields
+    const companyInput = document.getElementById('company-choice');
+    const roleInput = document.getElementById('role-choice');
 
-    // 3. Extract the exact text values selected by the student right now
-    const selectedCompany = companyDropdown ? companyDropdown.value : "";
-    const selectedRole = roleDropdown ? roleDropdown.value : "";
+    const selectedCompany = companyInput ? companyInput.value.trim() : "";
+    const selectedRole = roleInput ? roleInput.value.trim() : "";
 
-    // 4. Safety block: Verify the student actually made a selection before leaving the page
+    // 3. Strict business validation: Forces them to type whatever they want
     if (!selectedCompany || !selectedRole) {
-        alert("Please make sure you have selected both a Dream Company and a Target Job Role.");
+        alert("Please enter both your Target Dream Company and Target Job Role to begin.");
         return;
     }
 
-    console.log(`Redirecting student to interview for ${selectedCompany} as a ${selectedRole}`);
+    console.log(`Forwarding student interview request for Company: ${selectedCompany}, Role: ${selectedRole}`);
 
-    // 5. 🚀 ROUTE DYNAMICALLY: Packs the live choices straight into the URL pathway parameters
+    // 4. Send their exact raw typed words straight into the browser parameters
     const targetUrl = `interview.html?company=${encodeURIComponent(selectedCompany)}&role=${encodeURIComponent(selectedRole)}`;
     window.location.href = targetUrl;
 }
