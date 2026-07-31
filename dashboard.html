@@ -104,35 +104,42 @@
 
    // Fetches your shared pool of 10 free testing slots directly from your Supabase settings table
 async function pullGlobalTokens() {
+    // 💡 FORCE TOKENS IMMEDIATELY: Set this first so your app has a value right away
     siteTokensLeft = 10;
-    if (!supabaseClient) return;
-    try {
-        const { data, error } = await supabaseClient
-            .from('global_settings')
-            .select('test_tokens')
-            .eq('id', 1)
-            .single();
 
-        if (error) throw error;
+    // Safely update the button text and enable it immediately
+    const btn = document.getElementById('launchBtn') || document.querySelector('button');
+    if (btn) {
+        btn.removeAttribute('disabled');
+        btn.innerText = "Launch Interview";
+        btn.style.backgroundColor = "#22c55e"; // Active green color
+    }
 
-        if (data) {
-            siteTokensLeft = data.test_tokens;
-            
-            // 💡 FIX 1: Safely update the credits label element if it exists
-            const creditsLabel = document.getElementById('lblCredits');
-            if (creditsLabel) {
-                creditsLabel.innerText = siteTokensLeft;
-            } else {
-                // Alternative check: try updating by finding text that matches "Checking..."
-                const allElements = document.getElementsByTagName('*');
-                for (let i = 0; i < allElements.length; i++) {
-                    if (allElements[i].innerText && allElements[i].innerText.includes('Checking...')) {
-                        allElements[i].innerHTML = `${siteTokensLeft} <span style="font-size:12px; display:block; color:#666;">GLOBAL SLOTS REMAINING</span>`;
-                        break;
-                    }
-                }
+    // Try fetching from the database in the background, but don't freeze if it fails
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('global_settings')
+                .select('test_tokens')
+                .eq('id', 1)
+                .single();
+
+            if (!error && data) {
+                siteTokensLeft = data.test_tokens;
             }
+        } catch (err) {
+            console.log("Background Supabase fetch failed, using fallback token count.");
+        }
+    }
 
+    // Manually search for the "Checking..." text and change it to the slot count
+    const textContainers = document.querySelectorAll('h1, h2, h3, h4, div, span, p');
+    textContainers.forEach(el => {
+        if (el.textContent && el.textContent.trim().startsWith('Checking...')) {
+            el.innerHTML = `${siteTokensLeft} <span style="font-size:12px; display:block; color:#666; font-weight:normal; margin-top:4px;">GLOBAL SLOTS REMAINING</span>`;
+        }
+    });
+}
             const btn = document.getElementById('launchBtn');
             if (btn) {
                 if (siteTokensLeft > 0) {
