@@ -108,7 +108,7 @@ async function pullGlobalTokens() {
     siteTokensLeft = 10;
 
     // Safely update the button text and enable it immediately
-    const btn = document.getElementById('launchBtn') || document.querySelector('button');
+    const btn = document.getElementById('LaunchBtn') || document.querySelector('button');
     if (btn) {
         btn.removeAttribute('disabled');
         btn.innerText = "Launch Interview";
